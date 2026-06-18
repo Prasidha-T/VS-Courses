@@ -1,0 +1,3113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>From Code to Cloud — VS Platform Infrastructure &amp; Deployment</title>
+
+  <!-- Google Fonts: Bricolage Grotesque · DM Sans · JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+/* =============================================================
+   CODEBASE-TO-COURSE — COMPLETE DESIGN SYSTEM
+   Copy this file verbatim into the course output directory.
+   Never regenerate it — customize only via :root overrides
+   in _base.html (accent color only).
+   ============================================================= */
+
+/* ── GOOGLE FONTS (loaded via _base.html <head>) ───────────────
+   Bricolage Grotesque · DM Sans · JetBrains Mono
+   ──────────────────────────────────────────────────────────── */
+
+/* ── DESIGN TOKENS ─────────────────────────────────────────── */
+:root {
+  /* BACKGROUNDS */
+  --color-bg:             #FAF7F2;
+  --color-bg-warm:        #F5F0E8;
+  --color-bg-code:        #1E1E2E;
+  --color-text:           #2C2A28;
+  --color-text-secondary: #6B6560;
+  --color-text-muted:     #9E9790;
+  --color-border:         #E5DFD6;
+  --color-border-light:   #EEEBE5;
+  --color-surface:        #FFFFFF;
+  --color-surface-warm:   #FDF9F3;
+
+  /* ACCENT — overridden per course in _base.html */
+  --color-accent:         #D94F30;
+  --color-accent-hover:   #C4432A;
+  --color-accent-light:   #FDEEE9;
+  --color-accent-muted:   #E8836C;
+
+  /* SEMANTIC */
+  --color-success:        #2D8B55;
+  --color-success-light:  #E8F5EE;
+  --color-error:          #C93B3B;
+  --color-error-light:    #FDE8E8;
+  --color-info:           #2A7B9B;
+  --color-info-light:     #E4F2F7;
+
+  /* ACTOR COLORS */
+  --color-actor-1:        #D94F30;
+  --color-actor-2:        #2A7B9B;
+  --color-actor-3:        #7B6DAA;
+  --color-actor-4:        #D4A843;
+  --color-actor-5:        #2D8B55;
+
+  /* FONTS */
+  --font-display: 'Bricolage Grotesque', Georgia, serif;
+  --font-body:    'DM Sans', -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* TYPE SCALE */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+
+  /* LINE HEIGHTS */
+  --leading-tight:  1.15;
+  --leading-snug:   1.3;
+  --leading-normal: 1.6;
+  --leading-loose:  1.8;
+
+  /* SPACING */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* LAYOUT */
+  --content-width:      800px;
+  --content-width-wide: 1000px;
+  --nav-height:         50px;
+
+  /* RADII */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-full: 9999px;
+
+  /* SHADOWS (warm-tinted, never pure black) */
+  --shadow-sm: 0 1px 2px rgba(44,42,40,0.05);
+  --shadow-md: 0 4px 12px rgba(44,42,40,0.08);
+  --shadow-lg: 0 8px 24px rgba(44,42,40,0.10);
+  --shadow-xl: 0 16px 48px rgba(44,42,40,0.12);
+
+  /* EASING */
+  --ease-out:    cubic-bezier(0.16,1,0.3,1);
+  --ease-in-out: cubic-bezier(0.65,0,0.35,1);
+
+  /* DURATIONS */
+  --duration-fast:   150ms;
+  --duration-normal: 300ms;
+  --duration-slow:   500ms;
+  --stagger-delay:   120ms;
+}
+
+/* ── RESET & BASE ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  line-height: var(--leading-normal);
+  background: var(--color-bg);
+  background-image: radial-gradient(
+    ellipse at 20% 50%,
+    rgba(217,79,48,0.03) 0%,
+    transparent 50%
+  );
+}
+
+/* ── SCROLLBAR ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+/* ── CODE GLOBALS ───────────────────────────────────────────── */
+pre, code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: hidden;
+}
+.translation-code::-webkit-scrollbar,
+pre::-webkit-scrollbar { display: none; }
+
+/* Catppuccin-inspired syntax highlighting */
+.code-keyword  { color: #CBA6F7; }
+.code-string   { color: #A6E3A1; }
+.code-function { color: #89B4FA; }
+.code-comment  { color: #6C7086; }
+.code-number   { color: #FAB387; }
+.code-property { color: #F9E2AF; }
+.code-operator { color: #94E2D5; }
+.code-tag      { color: #F38BA8; }
+.code-attr     { color: #F9E2AF; }
+.code-value    { color: #A6E3A1; }
+.code-line     { display: block; }
+
+/* ── NAV ────────────────────────────────────────────────────── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-height);
+  z-index: 1000;
+  background: rgba(250,247,242,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.progress-bar {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--color-accent);
+  transition: width 100ms linear;
+}
+
+.nav-inner {
+  max-width: var(--content-width-wide);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.nav-title {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+.nav-dots {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nav-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--color-text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  position: relative;
+}
+.nav-dot::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-bg-code);
+  color: #CDD6F4;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+}
+.nav-dot:hover::after { opacity: 1; }
+.nav-dot.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+.nav-dot.visited {
+  border-color: var(--color-accent-muted);
+  background: var(--color-accent-muted);
+}
+
+/* ── MODULE STRUCTURE ───────────────────────────────────────── */
+.module {
+  min-height: 100dvh;
+  min-height: 100vh;
+  scroll-snap-align: start;
+  padding: var(--space-16) var(--space-6);
+  padding-top: calc(var(--nav-height) + var(--space-12));
+}
+
+.module-content {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.module-header { margin-bottom: var(--space-12); }
+
+.module-number {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-6xl);
+  font-weight: 800;
+  color: var(--color-accent);
+  opacity: 0.15;
+  line-height: 1;
+  margin-bottom: var(--space-2);
+}
+
+.module-title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+}
+
+.module-subtitle {
+  margin-top: var(--space-3);
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-snug);
+}
+
+.screen {
+  margin-bottom: var(--space-16);
+}
+
+.screen-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-6);
+  line-height: var(--leading-snug);
+}
+
+p { margin-bottom: var(--space-4); }
+p:last-child { margin-bottom: 0; }
+
+/* ── SCROLL ANIMATIONS ──────────────────────────────────────── */
+.animate-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+.animate-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-children > .animate-in {
+  transition-delay: calc(var(--stagger-index, 0) * var(--stagger-delay));
+}
+
+/* ── TRANSLATION BLOCKS ─────────────────────────────────────── */
+.translation-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+
+.translation-code {
+  background: var(--color-bg-code);
+  color: #CDD6F4;
+  padding: var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.translation-english {
+  background: var(--color-surface-warm);
+  padding: var(--space-6);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  border-left: 3px solid var(--color-accent);
+}
+
+.translation-label {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+}
+.translation-english .translation-label {
+  position: static;
+  display: block;
+  margin-bottom: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.translation-lines .tl {
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+}
+.translation-lines .tl:last-child { border-bottom: none; }
+
+/* ── QUIZ ───────────────────────────────────────────────────── */
+.quiz-container {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+
+.quiz-question-block { margin-bottom: var(--space-8); }
+.quiz-question-block:last-of-type { margin-bottom: 0; }
+
+.quiz-question {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  line-height: var(--leading-snug);
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  transition: border-color var(--duration-fast), background var(--duration-fast);
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--color-accent-muted); }
+.quiz-option.selected { border-color: var(--color-accent); background: var(--color-accent-light); }
+.quiz-option.correct  { border-color: var(--color-success); background: var(--color-success-light); }
+.quiz-option.incorrect{ border-color: var(--color-error);   background: var(--color-error-light); }
+.quiz-option:disabled { cursor: default; }
+
+.quiz-option-radio {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  flex-shrink: 0;
+  transition: all var(--duration-fast);
+}
+.quiz-option.selected .quiz-option-radio {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  box-shadow: inset 0 0 0 3px white;
+}
+.quiz-option.correct .quiz-option-radio  { border-color: var(--color-success); background: var(--color-success); box-shadow: inset 0 0 0 3px white; }
+.quiz-option.incorrect .quiz-option-radio{ border-color: var(--color-error);   background: var(--color-error);   box-shadow: inset 0 0 0 3px white; }
+
+.quiz-feedback {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height var(--duration-normal), opacity var(--duration-normal);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+.quiz-feedback.show {
+  max-height: 200px;
+  opacity: 1;
+  padding: var(--space-3);
+  margin-top: var(--space-2);
+}
+.quiz-feedback.success { background: var(--color-success-light); color: var(--color-success); }
+.quiz-feedback.error   { background: var(--color-error-light);   color: var(--color-error); }
+.quiz-feedback.warning { background: var(--color-info-light);    color: var(--color-info); }
+
+.quiz-check-btn, .quiz-reset-btn {
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background var(--duration-fast), transform var(--duration-fast);
+}
+.quiz-check-btn {
+  background: var(--color-accent);
+  color: white;
+  margin-right: var(--space-3);
+}
+.quiz-check-btn:hover { background: var(--color-accent-hover); transform: translateY(-1px); }
+.quiz-reset-btn {
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+.quiz-reset-btn:hover { border-color: var(--color-accent-muted); }
+
+/* Scenario block */
+.scenario-block { margin-bottom: var(--space-6); }
+.scenario-context {
+  background: var(--color-info-light);
+  border-left: 3px solid var(--color-info);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.scenario-label {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-info);
+  margin-bottom: var(--space-2);
+}
+
+/* ── DRAG AND DROP ──────────────────────────────────────────── */
+.dnd-container { margin: var(--space-8) 0; }
+.dnd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+.dnd-chip {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: grab;
+  user-select: none;
+  transition: opacity var(--duration-fast), transform var(--duration-fast);
+}
+.dnd-chip:active { cursor: grabbing; transform: scale(1.05); }
+.dnd-chip.dragging { opacity: 0.4; }
+.dnd-chip.placed { opacity: 0.3; pointer-events: none; }
+
+.dnd-zones { display: flex; flex-direction: column; gap: var(--space-4); }
+.dnd-zone {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: var(--color-surface);
+}
+.dnd-zone-label { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+.dnd-zone-target {
+  min-height: 40px;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  transition: border-color var(--duration-fast), background var(--duration-fast);
+}
+.dnd-zone-target.drag-over { border-color: var(--color-accent); background: var(--color-accent-light); }
+.dnd-zone-target.correct-placed { border-color: var(--color-success); background: var(--color-success-light); color: var(--color-success); font-weight: 600; }
+.dnd-zone-target.incorrect-placed{ border-color: var(--color-error); background: var(--color-error-light); }
+.touch-ghost {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* ── GROUP CHAT ─────────────────────────────────────────────── */
+.chat-window {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  margin: var(--space-8) 0;
+}
+
+.chat-messages {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 200px;
+}
+
+.chat-message {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  animation: fadeSlideUp 0.3s var(--ease-out);
+}
+
+.chat-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.chat-bubble {
+  max-width: 75%;
+  background: var(--color-bg-warm);
+  border-radius: var(--radius-md) var(--radius-md) var(--radius-md) 4px;
+  padding: var(--space-3) var(--space-4);
+}
+
+.chat-sender {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chat-bubble p {
+  font-size: var(--text-sm);
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+.chat-typing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-6) var(--space-4);
+}
+
+.chat-typing-dots {
+  display: flex;
+  gap: var(--space-1);
+  background: var(--color-bg-warm);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+}
+
+.typing-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  animation: typingBounce 1.4s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+.chat-controls {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-surface-warm);
+}
+.chat-progress {
+  margin-left: auto;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── FLOW / DATA FLOW ANIMATION ─────────────────────────────── */
+.flow-animation {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+
+.flow-actors {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.flow-actor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.flow-actor-icon {
+  width: 56px; height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-warm);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.flow-actor span {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+.flow-actor.active .flow-actor-icon {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+  box-shadow: 0 0 0 3px var(--color-accent-light), 0 0 20px rgba(217,79,48,0.15);
+  transform: scale(1.1);
+}
+
+.flow-packet {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  position: absolute;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 0 8px rgba(217,79,48,0.5);
+}
+
+.flow-step-label {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  min-height: 2.5em;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-warm);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-6);
+  line-height: var(--leading-normal);
+}
+
+.flow-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.flow-progress {
+  margin-left: auto;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── ARCHITECTURE DIAGRAM ───────────────────────────────────── */
+.arch-diagram {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+.arch-zone {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+.arch-zone-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+.arch-component {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  margin: var(--space-2);
+  transition: all var(--duration-fast);
+  font-size: var(--text-sm);
+}
+.arch-component:hover, .arch-component.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+.arch-icon { font-size: 1.5rem; }
+.arch-description {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg-warm);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  min-height: 2.5em;
+}
+
+/* ── LAYER TOGGLE ───────────────────────────────────────────── */
+.layer-demo { margin: var(--space-8) 0; }
+.layer-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.layer-tab {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+.layer-tab.active {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+.layer-viewport {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+.layer-description {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── BUG CHALLENGE ──────────────────────────────────────────── */
+.bug-challenge {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+.bug-challenge h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+}
+.bug-code {
+  background: var(--color-bg-code);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+.bug-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background var(--duration-fast);
+}
+.bug-line:hover { background: rgba(255,255,255,0.05); }
+.bug-line.correct  { background: rgba(45,139,85,0.2); }
+.bug-line.incorrect{ background: rgba(201,59,59,0.2); }
+.line-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: #6C7086;
+  min-width: 1.5em;
+  text-align: right;
+  user-select: none;
+}
+.bug-line code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: #CDD6F4;
+}
+.bug-feedback {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height var(--duration-normal), opacity var(--duration-normal);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+.bug-feedback.show {
+  max-height: 200px;
+  opacity: 1;
+  padding: var(--space-3);
+}
+.bug-feedback.success { background: var(--color-success-light); color: var(--color-success); }
+.bug-feedback.error   { background: var(--color-error-light);   color: var(--color-error); }
+
+/* ── CALLOUT BOXES ──────────────────────────────────────────── */
+.callout {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  margin: var(--space-6) 0;
+  border-left: 4px solid;
+}
+.callout-accent  { background: var(--color-accent-light);  border-color: var(--color-accent); }
+.callout-info    { background: var(--color-info-light);    border-color: var(--color-info); }
+.callout-warning { background: var(--color-error-light);   border-color: var(--color-error); }
+
+.callout-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
+.callout-title { display: block; font-weight: 700; margin-bottom: var(--space-1); }
+.callout-content p { font-size: var(--text-sm); margin: 0; color: var(--color-text-secondary); }
+
+/* ── PATTERN / FEATURE CARDS ────────────────────────────────── */
+.pattern-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-6) 0;
+}
+.pattern-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  border-top: 3px solid var(--color-accent);
+  transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal);
+}
+.pattern-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.pattern-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  margin-bottom: var(--space-3);
+}
+.pattern-title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+.pattern-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  margin: 0;
+}
+
+/* ── FLOW DIAGRAMS (static) ─────────────────────────────────── */
+.flow-steps {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin: var(--space-6) 0;
+}
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+.flow-step-num {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flow-step p { font-size: var(--text-sm); color: var(--color-text-secondary); max-width: 120px; margin: 0; }
+.flow-arrow {
+  font-size: var(--text-xl);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* ── BADGE / CONFIG LIST ────────────────────────────────────── */
+.badge-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: var(--space-6) 0;
+}
+.badge-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  transition: border-color var(--duration-fast);
+}
+.badge-item:hover { border-color: var(--color-accent-muted); }
+.badge-code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: var(--color-bg-code);
+  color: #CBA6F7;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.badge-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── GLOSSARY TOOLTIPS ──────────────────────────────────────── */
+.term {
+  border-bottom: 1.5px dashed var(--color-accent-muted);
+  cursor: pointer;
+}
+.term:hover, .term.active {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.term-tooltip {
+  position: fixed;
+  background: var(--color-bg-code);
+  color: #CDD6F4;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  line-height: var(--leading-normal);
+  width: max(200px, min(320px, 80vw));
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+  z-index: 10000;
+}
+.term-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-bg-code);
+}
+.term-tooltip.visible { opacity: 1; }
+.term-tooltip.flip::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--color-bg-code);
+}
+
+/* ── VISUAL FILE TREE ───────────────────────────────────────── */
+.file-tree {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  margin: var(--space-6) 0;
+}
+.ft-folder, .ft-file {
+  padding: var(--space-2) var(--space-3);
+  border-left: 2px solid var(--color-border-light);
+  margin-left: var(--space-4);
+}
+.ft-folder > .ft-name { color: var(--color-accent); font-weight: 600; }
+.ft-folder > .ft-name::before { content: '📁 '; }
+.ft-file > .ft-name::before { content: '📄 '; }
+.ft-desc {
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  margin-left: var(--space-2);
+  font-size: var(--text-xs);
+}
+.ft-children { margin-left: var(--space-4); }
+
+/* ── ICON-LABEL ROWS ────────────────────────────────────────── */
+.icon-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-6) 0;
+}
+.icon-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.icon-row strong { display: block; font-weight: 600; }
+.icon-row p { margin: var(--space-1) 0 0; color: var(--color-text-secondary); font-size: var(--text-sm); }
+.icon-circle {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* ── NUMBERED STEP CARDS ────────────────────────────────────── */
+.step-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-6) 0;
+}
+.step-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-accent);
+  box-shadow: var(--shadow-sm);
+}
+.step-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  flex-shrink: 0;
+}
+.step-body strong { display: block; font-weight: 600; margin-bottom: var(--space-1); }
+.step-body p { margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm); }
+
+/* ── SHARED BUTTON STYLE ────────────────────────────────────── */
+.btn {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  color: var(--color-text-secondary);
+}
+.btn:hover { border-color: var(--color-accent-muted); color: var(--color-accent); }
+.btn-primary {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+.btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); color: white; }
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --text-4xl: 1.875rem;
+    --text-5xl: 2.25rem;
+    --text-6xl: 3rem;
+  }
+  .translation-block { grid-template-columns: 1fr; }
+  .translation-english { border-left: none; border-top: 3px solid var(--color-accent); }
+  .pattern-cards { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --text-4xl: 1.5rem;
+    --text-5xl: 1.875rem;
+    --text-6xl: 2.25rem;
+  }
+  .module { padding: var(--space-8) var(--space-4); }
+  .pattern-cards { grid-template-columns: 1fr; }
+  .flow-steps { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .nav-title { max-width: 140px; }
+}
+
+/* ── KEYFRAMES ──────────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%           { transform: translateY(-6px); }
+}
+
+@keyframes packetMove {
+  from { left: var(--packet-from-x); top: var(--packet-from-y); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  to   { left: var(--packet-to-x);   top: var(--packet-to-y);   opacity: 0; }
+}
+  </style>
+
+  <!--
+    CUSTOMIZE PER COURSE — change only the three accent variables below.
+    Options:
+      vermillion  #D94F30 / #C4432A / #FDEEE9 / #E8836C  (default)
+      coral       #E06B56 / #C85A47 / #FDECEA / #E89585
+      teal        #2A7B9B / #1F6280 / #E4F2F7 / #5A9DB8
+      amber       #D4A843 / #BF9530 / #FDF5E0 / #E0C070
+      forest      #2D8B55 / #226B41 / #E8F5EE / #5AAD7A
+  -->
+  <style>
+    :root {
+      --color-accent:       #2A7B9B;
+      --color-accent-hover: #1F6280;
+      --color-accent-light: #E4F2F7;
+      --color-accent-muted: #5A9DB8;
+    }
+  </style>
+
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="nav-inner">
+      <span class="nav-title">From Code to Cloud</span>
+      <div class="nav-dots" id="nav-dots" role="tablist">
+        <button class="nav-dot" data-target="module-1" data-tooltip="What Infrastructure as Code Is" role="tab" aria-label="Module 1: What Infrastructure as Code Is"></button>
+        <button class="nav-dot" data-target="module-2" data-tooltip="The Cast &amp; the Layout" role="tab" aria-label="Module 2: The Cast and the Layout"></button>
+        <button class="nav-dot" data-target="module-3" data-tooltip="Wiring &amp; Build Order" role="tab" aria-label="Module 3: Wiring and Build Order"></button>
+        <button class="nav-dot" data-target="module-4" data-tooltip="Identity &amp; Secrets" role="tab" aria-label="Module 4: Identity and Secrets"></button>
+        <button class="nav-dot" data-target="module-5" data-tooltip="Helm &amp; Deployment" role="tab" aria-label="Module 5: Helm and Deployment"></button>
+        <button class="nav-dot" data-target="module-6" data-tooltip="Gotchas &amp; the Big Picture" role="tab" aria-label="Module 6: Gotchas and the Big Picture"></button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- modules/*.html content is assembled here by build.sh -->
+<section class="module" id="module-1" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">What "Infrastructure as Code" Actually Is</h1>
+      <p class="module-subtitle">Your app needs a home in the cloud. This course is the story of how two folders build that home — and move the app in — with no one clicking around a control panel.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Start with the thing you already know</h2>
+        <p>You built an app. It runs on your laptop. But a laptop isn't the internet — for real users to reach it, the app has to live on <span class="term" data-definition="Computers you rent from a company like Microsoft, Amazon, or Google instead of owning. You pay for what you use and they handle the physical machines. 'The cloud' is just someone else's computers in a data center.">rented computers in the cloud</span>.</p>
+        <p>Renting those computers, wiring them together, locking them down, and then placing your app on top is a <em>lot</em> of fiddly setup. This repo does all of it. It splits the job into two folders:</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🏗️</div>
+            <div>
+              <strong><code>infra/</code> — build the land</strong>
+              <p>Creates the cloud machines, networks, databases, and locks. The empty-but-ready property.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">📦</div>
+            <div>
+              <strong><code>deployment/</code> — move the app in</strong>
+              <p>Takes your packaged app and runs it on the land that <code>infra/</code> built.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🧭</div>
+          <div class="callout-content">
+            <strong class="callout-title">The one sentence to remember</strong>
+            <p><code>infra/</code> builds <em>where</em> the app lives; <code>deployment/</code> controls <em>what</em> runs there. The whole course is how those two halves meet.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The old way vs. the written-down way</h2>
+        <p>You <em>could</em> build all this by hand: log into the Azure web portal, click through hundreds of menus, and hope you remember every setting next time. People did this for years. It's slow, and nobody can ever rebuild it exactly.</p>
+        <p>Instead, this repo <strong>writes the cloud down as files</strong>. That's the whole idea behind the phrase:</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🖱️</div>
+            <h4 class="pattern-title">Clicking (imperative)</h4>
+            <p class="pattern-desc">You perform each step by hand, in order. Like giving turn-by-turn driving directions — and re-giving them every single time.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">📐</div>
+            <h4 class="pattern-title">Describing (declarative)</h4>
+            <p class="pattern-desc">You describe the <em>destination</em> — "I want a network and a database" — and a tool figures out the steps. Like handing someone the address.</p>
+          </div>
+        </div>
+
+        <p><span class="term" data-definition="Infrastructure as Code: managing cloud resources by writing them in files that you can save, review, and re-run — instead of clicking through a web console by hand.">Infrastructure as Code (IaC)</span> is the second card. The files in <code>infra/</code> are written in a language called <span class="term" data-definition="Bicep is Microsoft's language for describing Azure cloud resources. It's declarative: you describe what you want to exist, and Azure makes reality match. Files end in .bicep.">Bicep</span>, which describes <span class="term" data-definition="Microsoft's cloud platform — the rented computers, networks, and databases this project runs on. The competitor to Amazon AWS and Google Cloud.">Azure</span> resources.</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A "resource" is just a thing you want to exist</h2>
+        <p>Everything in Bicep is a <span class="term" data-definition="A single cloud thing you want Azure to create and manage — a network, a database, a virtual machine, a firewall rule. In Bicep, each one is a 'resource' block.">resource</span>: a network, a database, a lock. Here's a real one from <code>infra/bicep/modules/dev/net.bicep</code> — the private network the whole platform sits inside.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+<pre><code><span class="code-keyword">resource</span> vnet <span class="code-string">'Microsoft.Network/virtualNetworks@2024-05-01'</span> = {
+  <span class="code-property">name</span>: <span class="code-string">'${prefix}-dev-vnet'</span>
+  <span class="code-property">location</span>: location
+  <span class="code-property">properties</span>: {
+    <span class="code-property">addressSpace</span>: {
+      <span class="code-property">addressPrefixes</span>: [
+        <span class="code-string">'10.80.0.0/16'</span>
+      ]
+    }
+  }
+}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">"I want a thing called <strong>vnet</strong> — a private network."</p>
+              <p class="tl">Name it <code>vs-plat-dev-vnet</code> (the <code>${prefix}</code> fills in to <code>vs-plat</code>).</p>
+              <p class="tl">Put it in our cloud region (set elsewhere).</p>
+              <p class="tl">Reserve a big block of internal addresses, <code>10.80.0.0/16</code> — room for ~65,000 private addresses, like buying a whole zip code for the campus.</p>
+              <p class="tl">That's it. No "how" — just the "what."</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why this matters for steering AI</strong>
+            <p>When you ask an AI to "add a Redis cache" or "open this port," it should produce a <em>resource block like this one</em> — not a list of portal clicks. If it tells you to "go to the Azure dashboard and click…", it has missed how this project works. That's a smell you can now catch.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The magic word: idempotent</h2>
+        <p>The best part of describing instead of clicking: you can run it again and again safely. Azure compares your files to what already exists and only changes the difference.</p>
+
+        <div class="step-cards stagger-children">
+          <div class="step-card animate-in">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong>First run</strong>
+              <p>Nothing exists yet → Azure creates the network, database, and everything else.</p>
+            </div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>Run again, unchanged</strong>
+              <p>Everything already matches → Azure does nothing. No duplicates, no damage.</p>
+            </div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>Change one line, run again</strong>
+              <p>Azure changes only that one thing to make reality match the file.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>That property has a name: <span class="term" data-definition="A fancy word for 'safe to repeat.' Running the same thing once or five times leaves you in the same correct end state. The opposite of 'each run adds another copy.'">idempotent</span>. It's why the files — not the running cloud — are the source of truth.</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module1">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly. Bicep is declarative — you describe the desired end state and Azure works out the steps. A correct answer changes the file, not the live cloud by hand."
+               data-explanation-wrong="Think back to declarative vs. imperative. The whole point of IaC is that you don't perform manual steps — you describe what should exist and re-run the file.">
+            <h3 class="quiz-question">A teammate changed the database size by clicking in the Azure portal. Next time someone runs the Bicep files, what happens — and what's the real lesson?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Azure keeps the manual change forever; the files are now ignored.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The files are the source of truth — the next run reverts the manual change. So changes belong in the files, not the portal.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>It creates a second database, because re-running always adds more.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Right. 'infra/' builds the place; 'deployment/' puts the app on it. Keeping that split clear is how you know which folder a given task belongs in."
+               data-explanation-wrong="Re-read the two-folder split. One folder rents and wires the cloud machines; the other runs your actual application on top of them.">
+            <h3 class="quiz-question">You want to make the app use more memory when it runs. Which folder are you most likely editing?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>infra/</code> — it controls everything in the cloud.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Neither — memory is a laptop setting.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>deployment/</code> — how the running app behaves lives there.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">Try Again</button>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">➡️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Next up</strong>
+            <p>You know the idea. Now meet the cast — the actual files in <code>infra/</code>, who they are, and how one little script decides which to run.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-2" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">The Cast &amp; the Layout</h1>
+      <p class="module-subtitle">The <code>infra/bicep</code> folder isn't one big file — it's a small city, split into neighborhoods. Meet them, and meet the script that decides which one to build.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Think of it as city zoning</h2>
+        <p>A real city groups buildings into districts — industrial here, residential there — so things that belong together stay together. Azure does the same with a <span class="term" data-definition="A folder in Azure that holds related resources so they can be managed, billed, and deleted as a unit. Like a labeled drawer for one part of your cloud.">resource group</span>. This repo gives each district its own folder under <code>infra/bicep/modules/</code>.</p>
+
+        <div class="file-tree animate-in">
+          <div class="ft-folder open">
+            <span class="ft-name">infra/bicep/</span>
+            <span class="ft-desc">All the Azure blueprints</span>
+            <div class="ft-children">
+              <div class="ft-file">
+                <span class="ft-name">constants.bicep</span>
+                <span class="ft-desc">Shared address book: names, region, network ranges</span>
+              </div>
+              <div class="ft-file">
+                <span class="ft-name">manage.sh</span>
+                <span class="ft-desc">The deploy button — picks a blueprint and tells Azure to build it</span>
+              </div>
+              <div class="ft-folder open">
+                <span class="ft-name">modules/</span>
+                <span class="ft-desc">One folder per neighborhood (resource group)</span>
+                <div class="ft-children">
+                  <div class="ft-folder"><span class="ft-name">sub/</span><span class="ft-desc">Creates the empty neighborhoods themselves</span></div>
+                  <div class="ft-folder"><span class="ft-name">build/</span><span class="ft-desc">A factory that bakes reusable machine images</span></div>
+                  <div class="ft-folder"><span class="ft-name">runner/</span><span class="ft-desc">The CI build machines that compile your code</span></div>
+                  <div class="ft-folder"><span class="ft-name">dev/</span><span class="ft-desc">The real environment: network, database, cache, app host</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Meet the four neighborhoods</h2>
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🪧</div>
+            <div>
+              <strong><code>sub/</code> — the zoning office</strong>
+              <p>Runs once, before everything. Creates the empty resource groups (<code>dev-rg</code>, <code>runner-rg</code>, <code>build-rg</code>…) that the others fill in.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">🏭</div>
+            <div>
+              <strong><code>build/</code> — the image factory</strong>
+              <p>Bakes a ready-to-go Ubuntu machine image (Docker, .NET, the build tools pre-installed) so build machines boot up instant and identical.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-5)">🔧</div>
+            <div>
+              <strong><code>runner/</code> — the workshop</strong>
+              <p>Self-hosted <span class="term" data-definition="CI = Continuous Integration. The automated process that compiles your code, runs tests, and packages it every time you push a change. A 'runner' is the machine that does that work.">CI</span> machines (built from the factory image) that compile and package your app when you push code.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🏙️</div>
+            <div>
+              <strong><code>dev/</code> — downtown</strong>
+              <p>Where the app actually lives: the private network, the <span class="term" data-definition="Kubernetes is software that runs and supervises your app's containers across a group of machines, restarting them if they crash and spreading them out for reliability. AKS is Azure's managed version of it.">Kubernetes</span> cluster, the database, the cache, the secret vault, the front door.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">constants.bicep — the shared address book</h2>
+        <p>Names and numbers (the region, the prefix, the network ranges) get reused across dozens of files. Hardcoding them everywhere is how typos creep in. So they live in one file and every blueprint reads from it.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+<pre><code><span class="code-keyword">@export</span>()
+<span class="code-keyword">var</span> prefix = <span class="code-string">'vs-plat'</span>
+<span class="code-keyword">@export</span>()
+<span class="code-keyword">var</span> location = <span class="code-string">'eastus2'</span>
+<span class="code-keyword">@export</span>()
+<span class="code-keyword">var</span> aksNodesSubnetPrefix = <span class="code-string">'10.80.1.0/24'</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl"><code>@export()</code> means "other files are allowed to borrow this value."</p>
+              <p class="tl">Every resource name starts with <code>vs-plat</code>, set in exactly one place.</p>
+              <p class="tl">Everything is built in the <code>eastus2</code> region of Azure.</p>
+              <p class="tl">A reserved slice of the network for the app machines. Change it here, and every file that uses it updates at once.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">Single source of truth</strong>
+            <p>This is the most reusable idea in all of software: <strong>define a value once, reference it everywhere</strong>. When you tell an AI "rename the project prefix," the right answer changes <em>one line</em> in <code>constants.bicep</code> — not 200 lines across 25 files.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">manage.sh — one script, simple math</h2>
+        <p>You don't run each <code>.bicep</code> file by hand. You run <code>manage.sh</code> with a short <code>neighborhood/blueprint</code> name, and it does the bookkeeping. The mapping is dead simple:</p>
+
+        <div class="flow-steps animate-in">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <p>You type<br><code>./manage.sh dev/redis</code></p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <p>It finds the file<br><code>modules/dev/redis.bicep</code></p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <p>It targets group<br><code>vs-plat-dev-rg</code></p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <p>It names the build<br><code>vs-plat-dev-redis</code></p>
+          </div>
+        </div>
+
+        <p>One special case: if the neighborhood is <code>sub</code>, there's no resource group to target yet (you're <em>creating</em> the groups), so it deploys at the whole-<span class="term" data-definition="Your overall Azure account, the top level that contains all resource groups. Deploying 'at subscription scope' means acting on the whole account, not inside one group.">subscription</span> level instead. A few handy <span class="term" data-definition="A flag is an option you add to a command to change how it behaves, like adding '--dry-run'. When talking to AI you might say 'add a flag to preview changes instead of applying them.'">flags</span> change behavior without touching any blueprint:</p>
+
+        <div class="badge-list">
+          <div class="badge-item"><code class="badge-code">-w</code><span class="badge-desc">What-if: show what <em>would</em> change, build nothing. Your preview button.</span></div>
+          <div class="badge-item"><code class="badge-code">-d</code><span class="badge-desc">Dry run: just print the Azure command it would run.</span></div>
+          <div class="badge-item"><code class="badge-code">-x</code><span class="badge-desc">Delete the whole stack this blueprint created.</span></div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The neighborhoods, in their own words</h2>
+        <p>If the four folders could text each other about who depends on whom, it'd sound like this:</p>
+
+        <div class="chat-window" id="chat-module2">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="sub" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">🪧</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">sub/</span>
+                <p>Morning, everyone. I just created the empty resource groups. You all have a place to live now.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="build" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">🏭</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">build/</span>
+                <p>Thanks! I&apos;ll bake the Ubuntu machine image and drop it in the shared gallery. Anyone who needs a build VM, grab it from there.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="runner" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-5)">🔧</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-5)">runner/</span>
+                <p>Perfect — I&apos;ll boot my CI machines straight from your image. No need to install anything at startup.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="dev" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">🏙️</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">dev/</span>
+                <p>And once runner/ packages the app, I host it for real — network, Kubernetes, database, the works. I&apos;m the busy one.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="sub" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">🪧</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">sub/</span>
+                <p>So the order is: me first, then build, then runner, then dev. Nobody skips the line.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-typing" id="chat-module2-typing" style="display:none">
+            <div class="chat-avatar" id="chat-module2-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Next Message</button>
+            <button class="btn chat-all-btn">Play All</button>
+            <button class="btn chat-reset-btn">Replay</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module2">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Right. The name maps mechanically: rg/module → modules/rg/module.bicep, targeting vs-plat-rg-rg. Knowing this mapping means you can predict exactly what any command will touch."
+               data-explanation-wrong="Look again at the mapping. The first part before the slash is the neighborhood (resource group), the second part is the blueprint file inside that neighborhood's folder.">
+            <h3 class="quiz-question">A teammate runs <code>./manage.sh dev/postgres</code>. Which blueprint runs, and where?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>postgres/dev.bicep</code>, in the <code>postgres</code> group.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>modules/dev/postgres.bicep</code>, targeting the <code>vs-plat-dev-rg</code> group.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Every file in <code>modules/dev/</code>, all at once.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Exactly. -w (what-if) previews the changes without making them — the safe move before touching a shared environment."
+               data-explanation-wrong="You want to look before you leap. One of these flags shows what would change without changing anything — that's the one to reach for first.">
+            <h3 class="quiz-question">You're nervous about a change to the live network. What do you run first to stay safe?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>./manage.sh -w dev/net</code> to preview the diff first.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>./manage.sh -x dev/net</code> to delete it and start clean.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Edit the live network in the portal, then sync later.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-3" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">Wiring &amp; Build Order</h1>
+      <p class="module-subtitle">How the pieces connect into one private campus — and the quiet trick that lets Azure figure out what to build first, all by itself.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A gated campus, not a street of shops</h2>
+        <p>Most of this infrastructure is deliberately <strong>private</strong>. Picture a gated corporate campus: there are internal hallways between buildings, but no doors that open onto the public street. Data moves freely <em>inside</em>; the outside internet can't wander in.</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🧱</div>
+            <div>
+              <strong>VNet — the perimeter fence</strong>
+              <p>A <span class="term" data-definition="Virtual Network: a private, isolated network inside Azure where your cloud resources talk to each other. Outsiders can't see in unless you explicitly open a door.">virtual network</span> that wraps everything in one private address space (<code>10.80.0.0/16</code>).</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">🚪</div>
+            <div>
+              <strong>Subnets — rooms inside the fence</strong>
+              <p>The network is divided into labeled slices: one for app machines, one for the front door, one for "endpoints." Keeps traffic organized and contained.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🛫</div>
+            <div>
+              <strong>NAT gateway — the one-way exit</strong>
+              <p>A <span class="term" data-definition="NAT = Network Address Translation. A NAT gateway lets machines inside reach out to the internet (to download updates, say) without giving the internet any way to start a connection back in. Outbound only.">NAT gateway</span> lets machines call <em>out</em> (for updates) but gives the internet no way to call <em>in</em>.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🔌</div>
+            <div>
+              <strong>Private endpoints — internal-only doors</strong>
+              <p>The database, cache, and secret vault get a <span class="term" data-definition="A private endpoint gives a cloud service a private address inside your network, so your app reaches it without the data ever touching the public internet.">private endpoint</span> — an address that exists only inside the fence. No public hostname at all.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔒</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why go to all this trouble?</strong>
+            <p>If the database has no public door, an attacker on the internet literally cannot reach it — there's nothing to attack. "Private by default" turns whole categories of breach into non-events.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The trick: pieces point at each other</h2>
+        <p>Here's the elegant part. You never write "build the network first, then the subnet." Instead, the subnet simply <em>mentions</em> the network — and Azure infers the order from that mention.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE — dev/aks.bicep</span>
+<pre><code><span class="code-keyword">resource</span> aksNodesSubnet <span class="code-string">'Microsoft.Network/virtualNetworks/subnets@2024-05-01'</span> = {
+  <span class="code-property">name</span>: C.aksNodesSubnetName
+  <span class="code-property">parent</span>: vnet
+  <span class="code-property">properties</span>: {
+    <span class="code-property">addressPrefix</span>: C.aksNodesSubnetPrefix
+    <span class="code-property">natGateway</span>: {
+      <span class="code-property">id</span>: natGateway.id
+    }
+  }
+}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Create a subnet for the app machines.</p>
+              <p class="tl"><code>parent: vnet</code> — it lives inside the network. So the network <strong>must exist first</strong>. Azure now knows the order.</p>
+              <p class="tl">Give it its slice of addresses (from the shared address book).</p>
+              <p class="tl"><code>natGateway.id</code> — wire this subnet to the one-way exit. Another mention, another dependency Azure tracks automatically.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>Those two values — <code>vnet</code> and <code>natGateway</code> — are declared with the word <span class="term" data-definition="In Bicep, the 'existing' keyword means 'this resource was already created somewhere else — just look it up, don't make a new one.' It lets one blueprint reference things another blueprint built.">existing</span>, meaning "don't build these, just look them up." That's how separate blueprints reference each other's work.</p>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">This is a dependency graph</strong>
+            <p>Every <code>.id</code> reference is an arrow: "I need that thing first." Azure reads all the arrows and works out a safe build order on its own. It's the same idea behind a recipe that says "preheat the oven" before "bake" — you state the relationship, not a stopwatch.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Private DNS — the internal phone directory</h2>
+        <p>One catch with private doors: the app still knows the database by its public-sounding name, like <code>vs-plat-dev-psql.postgres.database.azure.com</code>. <span class="term" data-definition="DNS = Domain Name System. The internet's phone book: it turns a human name like google.com into the numeric address a computer actually dials.">DNS</span> normally turns that name into a <em>public</em> address.</p>
+        <p>So the campus keeps its own <span class="term" data-definition="A private DNS zone is a name-to-address phone book that only works inside your network. It overrides the public answer so a service name resolves to its private, internal door instead.">private DNS zone</span>: a phone book that quietly answers the <em>same</em> name with the <em>private</em> address instead. The app's code never changes — the name just resolves to the internal door.</p>
+
+        <div class="flow-steps animate-in">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <p>App asks for<br><code>...postgres.database.azure.com</code></p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <p>Private DNS answers with the <strong>internal</strong> address</p>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <p>Traffic stays inside the fence — never touches the internet</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Watch the build order unfold</h2>
+        <p>Because every piece points at the ones it needs, Azure can only build them in one valid order. Step through it — notice nothing is built before the thing it depends on:</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"First: the private network (the VNet) — the outer fence around everything."},
+          {"highlight":"flow-actor-2","label":"A subnet carves out a slice of that network. It names the VNet as its parent, so the VNet must come first.","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-3","label":"The service itself is created next — here, the Redis cache."},
+          {"highlight":"flow-actor-4","label":"A private endpoint plugs that service into the subnet: a private door, no public address.","packet":true,"from":"actor-3","to":"actor-4"},
+          {"highlight":"flow-actor-5","label":"Finally, a private DNS record points the service name at that private door, so apps inside can find it by name.","packet":true,"from":"actor-4","to":"actor-5"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1">
+              <div class="flow-actor-icon">🧱</div>
+              <span>VNet</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-2">
+              <div class="flow-actor-icon">🚪</div>
+              <span>Subnet</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-3">
+              <div class="flow-actor-icon">⚡</div>
+              <span>Redis</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-4">
+              <div class="flow-actor-icon">🔌</div>
+              <span>Private Endpoint</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-5">
+              <div class="flow-actor-icon">📒</div>
+              <span>Private DNS</span>
+            </div>
+          </div>
+
+          <div class="flow-packet" id="flow-packet"></div>
+
+          <div class="flow-step-label" id="flow-label">Click "Next Step" to watch the dependency order play out</div>
+
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module3">
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Exactly. The reference (parent: vnet, or natGateway.id) IS the ordering instruction. You declare relationships, not a sequence — and Azure derives the order."
+               data-explanation-wrong="Nobody writes the order by hand here. Look at how the subnet refers to the VNet — that reference is what tells Azure what must exist first.">
+            <h3 class="quiz-question">Nowhere in the code does it say "build the VNet before the subnet." So how does Azure know to do that?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>It builds files alphabetically by filename.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>A human has to deploy them one at a time in the right order.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The subnet references the VNet (<code>parent: vnet</code>), and Azure infers the order from that reference.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Right. The database has no public endpoint, so a private DNS record is what makes its name resolve to the internal door. If that record is missing or the zone isn't linked, the name resolves wrong and the app can't connect — even though the database is healthy."
+               data-explanation-wrong="The database itself is private and fine. The symptom — 'can't find the host' — points at name resolution, which is exactly what private DNS handles inside the network.">
+            <h3 class="quiz-question">The app suddenly can't reach the database — the error is "could not resolve host," but the database is up. Based on the campus model, where do you look first?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The private DNS — the name probably isn't resolving to the internal door.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The database password — it must be wrong.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The app's memory limit — it's out of room.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-4" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">Identity &amp; Secrets</h1>
+      <p class="module-subtitle">The most important security idea in the whole repo: the app proves <em>who it is</em> instead of carrying a password. Here's how that "passwordless" magic actually works.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Passwords in code are a time bomb</h2>
+        <p>The naive way to let an app reach a database is to paste the password into a config file. The problem: that password now lives in your code, your backups, your chat history, and anyone who copies the repo gets the keys.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🔑</div>
+            <h4 class="pattern-title">Carrying a master key</h4>
+            <p class="pattern-desc">A shared password copied into the app. If it leaks once, it leaks forever — and rotating it means hunting down every copy.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-success)">
+            <div class="pattern-icon" style="background: var(--color-success)">🪪</div>
+            <h4 class="pattern-title">Showing a badge</h4>
+            <p class="pattern-desc">The app proves its identity to Azure and gets a fresh, short-lived pass each time. Nothing secret is ever stored. This is what this repo does.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">The vocabulary: "passwordless"</strong>
+            <p>When the docs say the platform is <strong>passwordless</strong>, they mean the second card: the app authenticates with its <em>identity</em>, not a stored secret. This is the gold standard you should ask any AI to aim for when wiring up cloud services.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A managed identity is the app's badge</h2>
+        <p>Azure can hand a resource an official, built-in identity — a <span class="term" data-definition="A managed identity is an account for a piece of software (not a person) that Azure creates and maintains. The app uses it to prove who it is, with no password to store or rotate.">managed identity</span>. Think of it as a corporate badge with a photo: the building's systems recognize it, and you never had to invent or remember a password.</p>
+        <p>But there's a puzzle: the app runs inside <span class="term" data-definition="AKS = Azure Kubernetes Service. Azure's managed Kubernetes — the system that runs and supervises your app's containers. It's the 'downtown' where the app lives.">Kubernetes</span>, and Kubernetes has its <em>own</em> idea of identities. How do those two worlds trust each other? Through <span class="term" data-definition="Workload identity federation lets Azure trust identity tokens issued by another system (here, the Kubernetes cluster). Instead of a password, the app shows a signed token and Azure accepts it because the details match a pre-registered rule.">workload identity federation</span> — a one-time "treaty" between them:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE — dev/workload-identity.bicep</span>
+<pre><code><span class="code-keyword">resource</span> fedCred <span class="code-string">'...userAssignedIdentities/federatedIdentityCredentials@2024-11-30'</span> = {
+  <span class="code-property">name</span>: <span class="code-string">'aks-workload'</span>
+  <span class="code-property">parent</span>: appUami
+  <span class="code-property">properties</span>: {
+    <span class="code-property">issuer</span>: aks.properties.oidcIssuerProfile.issuerURL
+    <span class="code-property">subject</span>: <span class="code-string">'system:serviceaccount:${C.workloadNamespace}:${C.workloadServiceAccount}'</span>
+    <span class="code-property">audiences</span>: [
+      <span class="code-string">'api://AzureADTokenExchange'</span>
+    ]
+  }
+}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Register a trust rule on the app's badge (<code>appUami</code>).</p>
+              <p class="tl"><code>issuer</code>: "I trust tokens signed by <em>our</em> Kubernetes cluster."</p>
+              <p class="tl"><code>subject</code>: "…but only for one specific account — the <code>app-workload-sa</code> service account in the <code>default</code> namespace."</p>
+              <p class="tl"><code>audiences</code>: "…and only when the token is meant for Azure token exchange." Three conditions; all must match.</p>
+            </div>
+          </div>
+        </div>
+        <p>After this treaty exists, a pod running as that exact account can swap its Kubernetes token for a real Azure pass — <strong>no password anywhere</strong>.</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Watch the handshake happen</h2>
+        <p>When the app needs the database, here's the conversation behind the scenes. Notice nobody ever says a password:</p>
+
+        <div class="chat-window" id="chat-module4">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="pod" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">📦</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">App Pod</span>
+                <p>I need to read the database. I have no password though — that&apos;s on purpose.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="pod" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">📦</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">App Pod → Azure</span>
+                <p>Here&apos;s a signed token from Kubernetes proving I&apos;m the <code>app-workload-sa</code> account.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="entra" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">🛡️</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Azure Entra</span>
+                <p>Issuer, subject, and audience all match the federated trust rule on file. Verified. Here&apos;s a short-lived access pass — good for an hour.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="pod" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">📦</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">App Pod → Postgres</span>
+                <p>Connecting with this access pass instead of a password.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="pg" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-5)">🗄️</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-5)">Postgres</span>
+                <p>Pass checks out — you&apos;re the app identity Azure vouches for. Come on in. (And in an hour, you&apos;ll get a fresh one automatically.)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-typing" id="chat-module4-typing" style="display:none">
+            <div class="chat-avatar" id="chat-module4-typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+              <span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Next Message</button>
+            <button class="btn chat-all-btn">Play All</button>
+            <button class="btn chat-reset-btn">Replay</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">When a secret <em>is</em> unavoidable: the vault</h2>
+        <p>Some things genuinely are secrets — the CI runner's login token, for example. Those never go in the repo. They go in a <span class="term" data-definition="Azure Key Vault is a hardened, access-controlled safe for secrets like passwords, keys, and tokens. Apps fetch what they need at runtime; the secret never lives in the code.">Key Vault</span> (a locked safe), and access is granted by <span class="term" data-definition="RBAC = Role-Based Access Control. Instead of sharing one key, you grant a specific identity a specific role (like 'can read secrets') on a specific resource. Least privilege, by design.">role</span> — not by sharing a key.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE — dev/modules/raKvSecretsUser.bicep</span>
+<pre><code><span class="code-comment">// Key Vault Secrets User (4633458b-...)</span>
+<span class="code-keyword">resource</span> raSecretsUser <span class="code-string">'Microsoft.Authorization/roleAssignments@2022-04-01'</span> = {
+  <span class="code-property">name</span>: <span class="code-function">guid</span>(kv.id, principalId, <span class="code-string">'KeyVaultSecretsUser'</span>)
+  <span class="code-property">scope</span>: kv
+  <span class="code-property">properties</span>: {
+    <span class="code-property">roleDefinitionId</span>: <span class="code-function">subscriptionResourceId</span>(...)
+    <span class="code-property">principalId</span>: principalId
+    <span class="code-property">principalType</span>: <span class="code-string">'ServicePrincipal'</span>
+  }
+}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Grant a role assignment — "this identity may do this thing here."</p>
+              <p class="tl"><code>scope: kv</code> — the permission applies only to this one vault, nothing else.</p>
+              <p class="tl">The role is "Key Vault Secrets User": <em>read secrets, that is all</em>. Can't delete them, can't change settings.</p>
+              <p class="tl"><code>principalId</code> — who gets it: the app (or runner) badge. Least privilege, written down.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">📜</div>
+          <div class="callout-content">
+            <strong class="callout-title">Public ids vs. real secrets</strong>
+            <p>The repo deliberately commits some things that <em>look</em> sensitive but aren't — SSH <strong>public</strong> keys, OAuth <strong>client ids</strong>, identity <strong>client ids</strong>. Those are safe to share (they're like a username). Only the matching <em>secrets</em> go in the vault. Knowing the difference stops you from panicking — or worse, from leaking the real thing.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module4">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly. The whole point of federation is that there's no stored password to leak. The app proves identity with a short-lived token, so a leaked repo exposes nothing usable."
+               data-explanation-wrong="Re-read the handshake. The app never holds a long-lived password — it trades a Kubernetes-signed token for a short-lived Azure pass each time.">
+            <h3 class="quiz-question">Someone accidentally makes the whole repo public. How exposed is the database connection?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Fully — the database password is right there in the connection settings.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Not via a password — the passwordless path means there's no stored secret in the repo to steal.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>It doesn't matter, because the database is public anyway.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Right. The federated credential pins the exact namespace + service account. If the pod runs under a different account (or you typo the name), the subject won't match and Azure refuses the token — even though everything 'looks' deployed."
+               data-explanation-wrong="The database and network are fine. The failure is in the trust rule: it only accepts one specific Kubernetes account, so a mismatch there silently breaks the login.">
+            <h3 class="quiz-question">A new app pod gets "access denied" from Azure, but the database is healthy and reachable. The pod runs under a service account named <code>web-sa</code>. What's the likely cause?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The database needs more memory.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Redis is down, so Postgres won't accept logins.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The federated trust rule expects <code>app-workload-sa</code>, but the pod runs as <code>web-sa</code> — the subject doesn't match.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-5" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">Helm &amp; Deployment</h1>
+      <p class="module-subtitle">Bicep built the empty campus. Now the <code>deployment/</code> folder moves the app in — one template, filled in differently for each environment.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">From "build the land" to "move in"</h2>
+        <p>Your app ships as a <span class="term" data-definition="A container is your app plus everything it needs to run, sealed into one portable bundle. It behaves the same on any machine — like a shipping container that fits every truck and crane.">container</span>: a sealed bundle that runs the same everywhere. Kubernetes runs containers inside <span class="term" data-definition="A pod is the smallest unit Kubernetes runs — usually one container plus its settings. Kubernetes keeps the right number of pods alive and replaces any that crash.">pods</span>, spread across the <span class="term" data-definition="A cluster is the group of machines Kubernetes manages as one pool. You hand it containers; it decides which machine each runs on and reshuffles them as needed.">cluster</span> that Bicep created.</p>
+        <p>But Kubernetes wants long, repetitive YAML files describing every pod, network rule, and setting. Writing those by hand for dev, then again for staging, then prod, is error-prone. That's the job of <span class="term" data-definition="Helm is the package manager for Kubernetes. It takes template files with blanks and a values file that fills them in, then produces the final Kubernetes configuration. Think 'mail merge for cloud config.'">Helm</span>.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">✉️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Helm is a mail merge</strong>
+            <p>A form letter has blanks — "Dear ___, your ___ is ready." Helm <strong>templates</strong> are the form letter; a <strong>values file</strong> is the list that fills the blanks. Same template, different output for each environment. Write the structure once; vary only what changes.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">One template, four environments</h2>
+        <p>The chart ships a base <code>values.yaml</code> (the defaults), then a thin override file per environment. Deploying to dev? Helm stacks <code>values-dev.yaml</code> on top of the defaults. Only the differences are written down:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE — values-dev.yaml</span>
+<pre><code><span class="code-property">client</span>:
+  <span class="code-property">config</span>:
+    <span class="code-property">appEnv</span>: <span class="code-string">"development"</span>
+    <span class="code-property">authAuthority</span>: <span class="code-string">"https://auth.vs-platform.ai/realms/vs-platform"</span>
+<span class="code-property">workloadIdentityClientId</span>: <span class="code-string">"0af41a2c-18b0-4c3d-8112-c757a801455f"</span>
+<span class="code-property">ingress</span>:
+  <span class="code-property">host</span>: <span class="code-string">"dev.vs-platform.ai"</span>
+<span class="code-property">course</span>:
+  <span class="code-property">enabled</span>: <span class="code-keyword">true</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">For the <strong>dev</strong> environment only, override these blanks…</p>
+              <p class="tl">Tell the web app it's running in "development" mode and where to log users in.</p>
+              <p class="tl">The identity id from Module 4's Bicep — pasted here so the app wears the right badge.</p>
+              <p class="tl">This environment answers at <code>dev.vs-platform.ai</code>…</p>
+              <p class="tl">…and turns on the optional course site. Staging and prod just swap these few values.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Watch for drift</strong>
+            <p>The connection strings in <code>values.yaml</code> must match the real names Bicep created (<code>vs-plat-dev-psql</code>, <code>vsplatdevredis</code>…). If someone renames a database in Bicep but not here, the app deploys fine and then can't connect. Two files, one truth to keep in sync.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The umbrella: three apps, one chart</h2>
+        <p>This is an <span class="term" data-definition="An umbrella chart is a single Helm chart that packages several related apps together so they deploy as one unit, with one version number.">umbrella chart</span> — it bundles everything the platform serves into one versioned package:</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">⚙️</div>
+            <div>
+              <strong>API</strong>
+              <p>The .NET backend. Gets the database + cache connection strings and the health checks Kubernetes uses to know it's alive.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🖥️</div>
+            <div>
+              <strong>Client</strong>
+              <p>The Vue web app, served by a tiny nginx. Its settings are injected at startup so one image works in every environment.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">📚</div>
+            <div>
+              <strong>Course (optional)</strong>
+              <p>A static nginx site — like the page you're reading — turned on only where <code>course.enabled</code> is true. (Meta: this very file is meant to ship here.)</p>
+            </div>
+          </div>
+        </div>
+
+        <p>Each gets a <span class="term" data-definition="A Deployment tells Kubernetes 'keep N copies of this container running.' If one dies, Kubernetes starts a replacement automatically.">Deployment</span> (keep it running), a <span class="term" data-definition="A Service gives a set of pods one stable internal address, so other parts of the system can reach them even as individual pods come and go.">Service</span> (a stable internal address), and they share an <span class="term" data-definition="An Ingress is the rule set for the public front door: which incoming web address and path goes to which internal service.">Ingress</span> (the front-door routing rules).</p>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Where infra and deployment shake hands</h2>
+        <p>This is the moment the two halves of the course meet. Remember the app's badge from Module 4? Bicep created that identity and printed its id. Helm stamps that <em>same</em> id onto the Kubernetes account the pods run as:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE — templates/serviceaccount.yaml</span>
+<pre><code><span class="code-keyword">kind</span>: ServiceAccount
+<span class="code-property">metadata</span>:
+  <span class="code-property">name</span>: {{ .Values.serviceAccountName }}
+  <span class="code-property">annotations</span>:
+    <span class="code-property">azure.workload.identity/client-id</span>: {{ .Values.workloadIdentityClientId | quote }}</code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Create the Kubernetes account the app pods run as.</p>
+              <p class="tl">Its name (<code>app-workload-sa</code>) is exactly the <code>subject</code> the Bicep trust rule pinned in Module 4.</p>
+              <p class="tl">Stamp on the identity id that Bicep created. <strong>This annotation is the handshake</strong>: it links the running pod to its Azure badge, completing the passwordless path end to end.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🔗</div>
+          <div class="callout-content">
+            <strong class="callout-title">Two repos, one contract</strong>
+            <p>Bicep and Helm never call each other. They agree on <em>shared names and ids</em> — the service account name, the identity id, the App Gateway. Get those to line up and the campus and the app click together. That's the entire integration.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Trace one real request, end to end</h2>
+        <p>Everything you've learned, in one journey: you open the site, and your click travels through the infrastructure Bicep built and the apps Helm deployed. Step through it:</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"You open dev.vs-platform.ai in your browser."},
+          {"highlight":"flow-actor-2","label":"The request hits the Application Gateway — the public front door Bicep built, wired to Kubernetes by the Ingress rules.","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-3","label":"The path is just /, so the gateway routes to the Vue client pod, which serves the web page.","packet":true,"from":"actor-2","to":"actor-3"},
+          {"highlight":"flow-actor-4","label":"The page then calls /api/... for data. The gateway sees the /api path and routes that to the API pod instead.","packet":true,"from":"actor-2","to":"actor-4"},
+          {"highlight":"flow-actor-5","label":"The API reads and writes the database and cache — using the passwordless badge from Module 4, no password in sight.","packet":true,"from":"actor-4","to":"actor-5"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1">
+              <div class="flow-actor-icon">🌐</div>
+              <span>Browser</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-2">
+              <div class="flow-actor-icon">🚪</div>
+              <span>App Gateway</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-3">
+              <div class="flow-actor-icon">🖥️</div>
+              <span>Client pod</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-4">
+              <div class="flow-actor-icon">⚙️</div>
+              <span>API pod</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-5">
+              <div class="flow-actor-icon">🗄️</div>
+              <span>DB + Cache</span>
+            </div>
+          </div>
+
+          <div class="flow-packet" id="flow-packet"></div>
+
+          <div class="flow-step-label" id="flow-label">Click "Next Step" to follow your click through the whole stack</div>
+
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Check your understanding</h2>
+        <div class="quiz-container" id="quiz-module5">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly. The base values.yaml plus a small values-<env>.yaml override is the mail-merge pattern. You change only the few values that differ — the template structure stays identical, which is what keeps environments consistent."
+               data-explanation-wrong="You don't copy the whole template per environment — that's how environments drift apart. Helm keeps one template and layers a small per-environment values file on top.">
+            <h3 class="quiz-question">You need a new "staging" environment that's identical to dev except for its web address and database. What's the right move?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Copy every template file and hand-edit the staging copies.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Add a small <code>values-staging.yaml</code> that overrides only the host and connection strings.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Click through the Azure portal to set staging up by hand.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Right. Bicep and Helm coordinate through shared identifiers. If the service account name or the workload identity client-id don't match what Bicep set up, the pod can't claim its badge — so it can deploy yet fail to authenticate."
+               data-explanation-wrong="The pod is running, so the container and image are fine. The break is in the contract between the two repos — the names and ids that must line up for the identity handshake to work.">
+            <h3 class="quiz-question">A pod deploys and runs, but gets "access denied" reaching Azure. Both the Bicep identity and the Helm service account exist. Where's the most likely break?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The container image is corrupted.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>The browser is caching an old page.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>A mismatch in the shared contract — the service account name or client-id don't line up between the two repos.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module5')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module5')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-6" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">Gotchas &amp; the Big Picture</h1>
+      <p class="module-subtitle">The traps that bite real people, and the single mental map that ties all six modules together.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The pre-flight checklist</h2>
+        <p>Pilots don't trust memory before takeoff — they run a checklist, every time. These are the items this codebase's own docs warn about. Skim them now; they'll save you an afternoon later.</p>
+
+        <div class="pattern-cards">
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🏷️</div>
+            <h4 class="pattern-title">Never use <code>latest</code></h4>
+            <p class="pattern-desc">Image tags must be pinned to a specific version. <code>latest</code> is a moving target — two deploys can silently run different code, and you can't roll back.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-error)">
+            <div class="pattern-icon" style="background: var(--color-error)">🔢</div>
+            <h4 class="pattern-title">Bump the chart version</h4>
+            <p class="pattern-desc">Published chart versions are <span class="term" data-definition="Immutable means it cannot be changed once published. To ship an update you must publish a new version number — you can't overwrite the old one.">immutable</span>. Change anything in the chart? Bump <code>version</code> in <code>Chart.yaml</code> or your change won't ship.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">⚡</div>
+            <h4 class="pattern-title">Unique resource names</h4>
+            <p class="pattern-desc">Two Azure resources with the same name (case-insensitive) crash the model at startup — not at build time. Catch it by validating, not just compiling.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-info)">
+            <div class="pattern-icon" style="background: var(--color-info)">👀</div>
+            <h4 class="pattern-title">Preview before applying</h4>
+            <p class="pattern-desc">Run <code>manage.sh -w</code> (what-if) on shared environments before you change them. Look at the diff first; surprises in prod are expensive.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-info)">
+            <div class="pattern-icon" style="background: var(--color-info)">📦</div>
+            <h4 class="pattern-title">Mind the 1&nbsp;MB course cap</h4>
+            <p class="pattern-desc">All <code>course/*.html</code> files share one Kubernetes <span class="term" data-definition="A ConfigMap is a Kubernetes object that holds configuration or small files, which it hands to pods at runtime. It has a hard 1 MB size limit.">ConfigMap</span> — hard-capped at 1 MB. One course fits; many will need splitting.</p>
+          </div>
+          <div class="pattern-card" style="border-top: 3px solid var(--color-actor-3)">
+            <div class="pattern-icon" style="background: var(--color-actor-3)">🚧</div>
+            <h4 class="pattern-title">Don't trust a green build</h4>
+            <p class="pattern-desc">Bicep compiling cleanly doesn't mean it deploys. Validate the model (what-if or a real run) — a clash or a missing dependency only shows up then.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Spot the bug</h2>
+        <p>A teammate opens a pull request changing the API image. One line breaks a rule you just learned. Click the line you'd flag in review:</p>
+
+        <div class="bug-challenge">
+          <div class="bug-code">
+            <div class="bug-line" data-line="1" onclick="checkBugLine(this, false)" data-hint="That's just the section header — keep looking for the value that breaks a rule.">
+              <span class="line-num">1</span>
+              <code>api:</code>
+            </div>
+            <div class="bug-line" data-line="2" onclick="checkBugLine(this, false)" data-hint="The repository name is fine — it points at the right image. Look at how the version is specified.">
+              <span class="line-num">2</span>
+              <code>  image:</code>
+            </div>
+            <div class="bug-line" data-line="3" onclick="checkBugLine(this, false)" data-hint="The repository name is fine. The problem is which *version* of it gets pulled.">
+              <span class="line-num">3</span>
+              <code>    repository: vs-platform/vsplatform-api</code>
+            </div>
+            <div class="bug-line bug-target" data-line="4" onclick="checkBugLine(this, true)" data-explanation="The tag is <code>latest</code> — a moving target. Two deploys could run different code, and there's no fixed version to roll back to. Pin a specific tag instead: a commit SHA for dev, or a release tag for staging/prod.">
+              <span class="line-num">4</span>
+              <code>    tag: "latest"</code>
+            </div>
+            <div class="bug-line" data-line="5" onclick="checkBugLine(this, false)" data-hint="Pull policy is a reasonable choice here — not the rule-breaker.">
+              <span class="line-num">5</span>
+              <code>    pullPolicy: IfNotPresent</code>
+            </div>
+          </div>
+          <div class="bug-feedback" id="bug-feedback"></div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The whole journey, one map</h2>
+        <p>Here's everything, in order. Each stage hands something to the next — the same dependency thinking from Module 3, scaled up to the entire platform:</p>
+
+        <div class="flow-steps animate-in">
+          <div class="flow-step"><div class="flow-step-num">1</div><p><strong>sub/</strong><br>create the resource groups</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">2</div><p><strong>build/</strong><br>bake the machine image</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">3</div><p><strong>runner/</strong><br>stand up CI machines</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">4</div><p><strong>dev/</strong><br>network, AKS, DB, identity</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step"><div class="flow-step-num">5</div><p><strong>Helm</strong><br>deploy the app onto it</p></div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Explore the architecture</h2>
+        <p>Click any piece to see its job. Left side is what Bicep builds (<code>infra/</code>); right side is what Helm runs on top (<code>deployment/</code>):</p>
+
+        <div class="arch-diagram">
+          <div class="arch-zone arch-zone-browser">
+            <h4 class="arch-zone-label">infra/ — Azure, built by Bicep</h4>
+            <div class="arch-component" data-desc="The private network (VNet) + subnets + NAT gateway. The gated campus everything lives inside; outbound-only to the internet.">
+              <div class="arch-icon">🧱</div><span>Network</span>
+            </div>
+            <div class="arch-component" data-desc="The Kubernetes cluster (AKS). The pool of machines that actually run your app's containers, with a workload-identity OIDC issuer for the passwordless path.">
+              <div class="arch-icon">☸️</div><span>AKS cluster</span>
+            </div>
+            <div class="arch-component" data-desc="Postgres database + Redis cache, both private (no public door). Reached over private endpoints and private DNS.">
+              <div class="arch-icon">🗄️</div><span>Data services</span>
+            </div>
+            <div class="arch-component" data-desc="Key Vault (the secret safe) + managed identities + RBAC role assignments. The 'show a badge, don't carry a key' machinery.">
+              <div class="arch-icon">🪪</div><span>Identity + secrets</span>
+            </div>
+            <div class="arch-component" data-desc="The Application Gateway — the public front door. AGIC turns Helm Ingress rules into real routing here.">
+              <div class="arch-icon">🚪</div><span>App Gateway</span>
+            </div>
+          </div>
+          <div class="arch-zone arch-zone-external">
+            <h4 class="arch-zone-label">deployment/ — Kubernetes, run by Helm</h4>
+            <div class="arch-component" data-desc="The .NET API pod. Gets connection strings + OIDC settings injected; talks to the DB and cache with the workload identity badge.">
+              <div class="arch-icon">⚙️</div><span>API</span>
+            </div>
+            <div class="arch-component" data-desc="The Vue web client pod, served by nginx. Settings are injected at startup so one image works in every environment.">
+              <div class="arch-icon">🖥️</div><span>Client</span>
+            </div>
+            <div class="arch-component" data-desc="The optional static course site (this very page is meant to ship here). A stock nginx pod serving HTML embedded from the course/ folder.">
+              <div class="arch-icon">📚</div><span>Course site</span>
+            </div>
+            <div class="arch-component" data-desc="values.yaml + values-dev/staging/prod.yaml. The mail-merge inputs that fill the chart templates differently per environment.">
+              <div class="arch-icon">✉️</div><span>Values files</span>
+            </div>
+          </div>
+          <div class="arch-description" id="arch-desc">Click any component to learn what it does</div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🔁</div>
+          <div class="callout-content">
+            <strong class="callout-title">The loop closes</strong>
+            <p>This page itself is a "Course site" on the right. It's served by the Helm chart it describes, on the AKS cluster the Bicep it describes built. You've just read the system that publishes this very page.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Final check — put it all together</h2>
+        <div class="quiz-container" id="quiz-module6">
+          <div class="scenario-block">
+            <div class="scenario-context">
+              <span class="scenario-label">Scenario</span>
+              <p>You drop a new <code>iac.html</code> into <code>course/</code> and redeploy. The site still shows the old content — your file isn't there. Everything else deployed fine.</p>
+            </div>
+            <div class="quiz-question-block"
+                 data-correct="opt-b"
+                 data-explanation-right="Exactly. Chart versions are immutable in the registry — if you don't bump version in Chart.yaml, the deploy reuses the already-published chart and never picks up your new file. Bump the version and republish."
+                 data-explanation-wrong="The content embeds at package time via the file glob, so the file would be included — IF a new chart version were published. Think about what makes a published chart update get picked up.">
+              <h3 class="quiz-question">What's the most likely fix?</h3>
+              <div class="quiz-options">
+                <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                  <div class="quiz-option-radio"></div>
+                  <span>Restart the database — it's caching the page.</span>
+                </button>
+                <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                  <div class="quiz-option-radio"></div>
+                  <span>Bump <code>version</code> in <code>Chart.yaml</code> and republish — the old version is immutable.</span>
+                </button>
+                <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                  <div class="quiz-option-radio"></div>
+                  <span>Rename the file to <code>index.html</code> — only that name is allowed.</span>
+                </button>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Right. A name clash crashes the model at startup (registration), not at compile. The fix pattern in this repo is exactly this: give the database resource a distinct name like AddDatabase('keycloak-db', 'keycloak'). Validate the model, don't just trust a green build."
+               data-explanation-wrong="A clean compile doesn't catch this. Two resources sharing a name (case-insensitive) is a startup-time crash — which is why you validate the model rather than trusting that it built.">
+            <h3 class="quiz-question">You add a new Azure resource and reuse a name that already exists elsewhere in the model. <code>dotnet build</code> passes. What happens, and what's the lesson?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>It crashes at startup, not compile — so validate the model, don't trust a green build.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Azure auto-renames the second one; nothing to worry about.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>Nothing — if it compiled, it's correct.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Exactly — you've got the whole map. infra/ (Bicep) builds the campus; deployment/ (Helm) moves the app in; they meet at shared names and ids. That's the mental model you came for."
+               data-explanation-wrong="Close, but recall the clean split: one side provisions the cloud with Bicep, the other deploys the app with Helm, and they coordinate through shared identifiers — not by one being 'inside' the other.">
+            <h3 class="quiz-question">In one sentence to a colleague: how do the two folders relate?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span>They're the same thing written twice for safety.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>deployment/</code> builds the cloud and <code>infra/</code> runs the app.</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div>
+                <span><code>infra/</code> (Bicep) builds the cloud campus; <code>deployment/</code> (Helm) runs the app on it; they meet at shared names and ids.</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module6')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module6')">Try Again</button>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🎓</div>
+          <div class="callout-content">
+            <strong class="callout-title">You made it</strong>
+            <p>You can now read this repo's infrastructure and deployment, predict what a command will touch, spot a <code>latest</code> tag or a forgotten version bump, and explain the passwordless path. That's exactly the fluency you need to steer an AI through it — and to catch it when it's wrong.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+  </main>
+
+  <script>
+/**
+ * CODEBASE-TO-COURSE — COMPLETE JS ENGINE
+ * Copy this file verbatim into the course output directory.
+ * Never regenerate it. It handles all interactivity generically.
+ *
+ * Engines included:
+ *  - Navigation & progress bar
+ *  - Scroll-triggered reveal animations
+ *  - Keyboard navigation
+ *  - Glossary tooltips
+ *  - Quiz (multiple-choice & scenario)
+ *  - Drag-and-drop matching
+ *  - Group chat animation
+ *  - Data flow / message flow animation
+ *  - Architecture diagram
+ *  - "Spot the bug" challenge
+ *  - Layer toggle
+ */
+(function () {
+  'use strict';
+
+  /* ── HELPERS ──────────────────────────────────────────────── */
+  function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function $$(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
+
+  /* ── NAVIGATION & PROGRESS BAR ────────────────────────────── */
+  const progressBar = $('#progress-bar');
+  const navDots     = $$('.nav-dot');
+  const modules     = $$('.module');
+
+  function updateProgress() {
+    if (!progressBar) return;
+    const scrollTop    = window.scrollY;
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct          = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    progressBar.style.width = pct + '%';
+    progressBar.setAttribute('aria-valuenow', Math.round(pct));
+    updateNavDots();
+  }
+
+  function updateNavDots() {
+    const scrollMid = window.scrollY + window.innerHeight / 2;
+    modules.forEach((mod, i) => {
+      const dot = navDots[i];
+      if (!dot) return;
+      const top    = mod.offsetTop;
+      const bottom = top + mod.offsetHeight;
+      if (scrollMid >= top && scrollMid < bottom) {
+        dot.classList.add('active');
+        dot.classList.remove('visited');
+      } else if (window.scrollY + window.innerHeight > top) {
+        dot.classList.remove('active');
+        dot.classList.add('visited');
+      } else {
+        dot.classList.remove('active', 'visited');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', () => requestAnimationFrame(updateProgress), { passive: true });
+  updateProgress();
+
+  // Nav dot click → scroll to module
+  navDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const target = $('#' + dot.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  /* ── KEYBOARD NAVIGATION ───────────────────────────────────── */
+  function currentModuleIndex() {
+    const scrollMid = window.scrollY + window.innerHeight / 2;
+    for (let i = 0; i < modules.length; i++) {
+      const top    = modules[i].offsetTop;
+      const bottom = top + modules[i].offsetHeight;
+      if (scrollMid >= top && scrollMid < bottom) return i;
+    }
+    return 0;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      const next = modules[currentModuleIndex() + 1];
+      if (next) { next.scrollIntoView({ behavior: 'smooth' }); e.preventDefault(); }
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      const prev = modules[currentModuleIndex() - 1];
+      if (prev) { prev.scrollIntoView({ behavior: 'smooth' }); e.preventDefault(); }
+    }
+  });
+
+  /* ── SCROLL-TRIGGERED REVEAL ───────────────────────────────── */
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+  $$('.animate-in').forEach(el => revealObserver.observe(el));
+
+  // Stagger children
+  $$('.stagger-children').forEach(parent => {
+    Array.from(parent.children).forEach((child, i) => {
+      child.style.setProperty('--stagger-index', i);
+    });
+  });
+
+  /* ── GLOSSARY TOOLTIPS ─────────────────────────────────────── */
+  let activeTooltip = null;
+
+  function positionTooltip(term, tip) {
+    const rect     = term.getBoundingClientRect();
+    const tipWidth = Math.min(320, Math.max(200, window.innerWidth * 0.8));
+    let left = rect.left + rect.width / 2 - tipWidth / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - tipWidth - 8));
+    tip.style.left  = left + 'px';
+    tip.style.width = tipWidth + 'px';
+    document.body.appendChild(tip);
+    const tipHeight = tip.offsetHeight;
+    if (rect.top - tipHeight - 12 < 0) {
+      tip.style.top = (rect.bottom + 8) + 'px';
+      tip.classList.add('flip');
+    } else {
+      tip.style.top = (rect.top - tipHeight - 8) + 'px';
+      tip.classList.remove('flip');
+    }
+  }
+
+  function showTooltip(term, tip) {
+    if (activeTooltip && activeTooltip !== tip) {
+      activeTooltip.classList.remove('visible');
+      activeTooltip.remove();
+    }
+    positionTooltip(term, tip);
+    requestAnimationFrame(() => tip.classList.add('visible'));
+    activeTooltip = tip;
+  }
+
+  function hideTooltip(tip) {
+    tip.classList.remove('visible');
+    setTimeout(() => { if (!tip.classList.contains('visible')) tip.remove(); }, 150);
+    if (activeTooltip === tip) activeTooltip = null;
+  }
+
+  $$('.term').forEach(term => {
+    const tip = document.createElement('span');
+    tip.className = 'term-tooltip';
+    tip.textContent = term.dataset.definition;
+
+    term.addEventListener('mouseenter', () => showTooltip(term, tip));
+    term.addEventListener('mouseleave', () => hideTooltip(tip));
+    term.addEventListener('click', e => {
+      e.stopPropagation();
+      tip.classList.contains('visible') ? hideTooltip(tip) : showTooltip(term, tip);
+    });
+  });
+
+  document.addEventListener('click', () => {
+    if (activeTooltip) { activeTooltip.classList.remove('visible'); activeTooltip.remove(); activeTooltip = null; }
+  });
+
+  /* ── QUIZ ENGINE ───────────────────────────────────────────── */
+  window.selectOption = function (btn) {
+    const block = btn.closest('.quiz-question-block');
+    $$('.quiz-option', block).forEach(o => o.classList.remove('selected'));
+    btn.classList.add('selected');
+  };
+
+  window.checkQuiz = function (containerId) {
+    const container = $('#' + containerId);
+    if (!container) return;
+    $$('.quiz-question-block', container).forEach(q => {
+      const selected  = $('.quiz-option.selected', q);
+      const feedback  = $('.quiz-feedback', q);
+      const correct   = q.dataset.correct;
+      const rightExp  = q.dataset.explanationRight  || '';
+      const wrongExp  = q.dataset.explanationWrong  || '';
+
+      if (!selected) {
+        feedback.textContent = 'Pick an answer first!';
+        feedback.className = 'quiz-feedback show warning';
+        return;
+      }
+      $$('.quiz-option', q).forEach(o => o.disabled = true);
+
+      if (selected.dataset.value === correct) {
+        selected.classList.add('correct');
+        feedback.innerHTML = '<strong>Exactly!</strong> ' + rightExp;
+        feedback.className = 'quiz-feedback show success';
+      } else {
+        selected.classList.add('incorrect');
+        const correctBtn = $(`.quiz-option[data-value="${correct}"]`, q);
+        if (correctBtn) correctBtn.classList.add('correct');
+        feedback.innerHTML = '<strong>Not quite.</strong> ' + wrongExp;
+        feedback.className = 'quiz-feedback show error';
+      }
+    });
+  };
+
+  window.resetQuiz = function (containerId) {
+    const container = $('#' + containerId);
+    if (!container) return;
+    $$('.quiz-option', container).forEach(o => {
+      o.classList.remove('selected', 'correct', 'incorrect');
+      o.disabled = false;
+    });
+    $$('.quiz-feedback', container).forEach(f => { f.className = 'quiz-feedback'; f.textContent = ''; });
+  };
+
+  /* ── DRAG-AND-DROP ENGINE ──────────────────────────────────── */
+  function initDnD(containerEl) {
+    if (!containerEl) return;
+    const chips = $$('.dnd-chip', containerEl);
+    const zones = $$('.dnd-zone', containerEl);
+
+    // Mouse (HTML5 Drag API)
+    chips.forEach(chip => {
+      chip.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', chip.dataset.answer);
+        chip.classList.add('dragging');
+      });
+      chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
+    });
+
+    zones.forEach(zone => {
+      const target = $('.dnd-zone-target', zone);
+      if (!target) return;
+      target.addEventListener('dragover',  e => { e.preventDefault(); target.classList.add('drag-over'); });
+      target.addEventListener('dragleave', ()  => target.classList.remove('drag-over'));
+      target.addEventListener('drop', e => {
+        e.preventDefault();
+        target.classList.remove('drag-over');
+        const answer = e.dataTransfer.getData('text/plain');
+        const chip   = $(`.dnd-chip[data-answer="${answer}"]`, containerEl);
+        if (!chip) return;
+        target.textContent    = chip.textContent;
+        target.dataset.placed = answer;
+        chip.classList.add('placed');
+      });
+    });
+
+    // Touch
+    chips.forEach(chip => {
+      chip.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const ghost = chip.cloneNode(true);
+        ghost.classList.add('touch-ghost');
+        ghost.style.cssText = `position:fixed;z-index:9999;pointer-events:none;left:${touch.clientX - 40}px;top:${touch.clientY - 20}px;`;
+        document.body.appendChild(ghost);
+        chip._ghost  = ghost;
+        chip._answer = chip.dataset.answer;
+      }, { passive: false });
+
+      chip.addEventListener('touchmove', e => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        if (chip._ghost) {
+          chip._ghost.style.left = (touch.clientX - 40) + 'px';
+          chip._ghost.style.top  = (touch.clientY - 20) + 'px';
+        }
+        zones.forEach(z => { const t = $('.dnd-zone-target', z); if (t) t.classList.remove('drag-over'); });
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        const zt = el && el.closest('.dnd-zone-target');
+        if (zt) zt.classList.add('drag-over');
+      }, { passive: false });
+
+      chip.addEventListener('touchend', e => {
+        if (chip._ghost) { chip._ghost.remove(); chip._ghost = null; }
+        const touch = e.changedTouches[0];
+        const el    = document.elementFromPoint(touch.clientX, touch.clientY);
+        const zt    = el && el.closest('.dnd-zone-target');
+        if (zt) {
+          zt.textContent    = chip.textContent;
+          zt.dataset.placed = chip._answer;
+          chip.classList.add('placed');
+        }
+        zones.forEach(z => { const t = $('.dnd-zone-target', z); if (t) t.classList.remove('drag-over'); });
+      });
+    });
+  }
+
+  window.checkDnD = function (containerId) {
+    const container = $('#' + containerId);
+    if (!container) return;
+    $$('.dnd-zone', container).forEach(zone => {
+      const target  = $('.dnd-zone-target', zone);
+      if (!target || !target.dataset.placed) return;
+      if (target.dataset.placed === zone.dataset.correct) {
+        target.classList.add('correct-placed');
+      } else {
+        target.classList.add('incorrect-placed');
+      }
+    });
+  };
+
+  window.resetDnD = function (containerId) {
+    const container = $('#' + containerId);
+    if (!container) return;
+    $$('.dnd-zone-target', container).forEach(t => {
+      t.textContent = 'Drop here';
+      delete t.dataset.placed;
+      t.classList.remove('correct-placed', 'incorrect-placed');
+    });
+    $$('.dnd-chip', container).forEach(c => c.classList.remove('placed', 'dragging'));
+  };
+
+  // Auto-init all dnd containers
+  $$('.dnd-container').forEach(el => initDnD(el));
+
+  /* ── GROUP CHAT ENGINE ─────────────────────────────────────── */
+  function initChat(containerEl) {
+    if (!containerEl) return;
+    const messages    = $$('.chat-message', containerEl);
+    const typingEl    = $('.chat-typing', containerEl);
+    const typingAvEl  = $('#' + containerEl.id + '-typing-avatar') || $('.chat-avatar', typingEl);
+    const progressEl  = $('.chat-progress', containerEl);
+    let index = 0;
+
+    // Build actor map from messages
+    const actors = {};
+    messages.forEach(msg => {
+      const sender = msg.dataset.sender;
+      const avatar = $('.chat-avatar', msg);
+      if (avatar && !actors[sender]) {
+        actors[sender] = { initial: avatar.textContent.trim(), style: avatar.style.background };
+      }
+    });
+
+    function updateProgress() {
+      if (progressEl) progressEl.textContent = index + ' / ' + messages.length + ' messages';
+    }
+
+    function showNext() {
+      if (index >= messages.length) return;
+      const msg    = messages[index];
+      const sender = msg.dataset.sender;
+
+      if (typingEl && actors[sender]) {
+        if (typingAvEl) {
+          typingAvEl.textContent       = actors[sender].initial;
+          typingAvEl.style.background  = actors[sender].style;
+        }
+        typingEl.style.display = 'flex';
+      }
+
+      setTimeout(() => {
+        if (typingEl) typingEl.style.display = 'none';
+        msg.style.display = 'flex';
+        msg.style.animation = 'fadeSlideUp 0.3s var(--ease-out)';
+        index++;
+        updateProgress();
+      }, 800);
+    }
+
+    function showAll() {
+      const iv = setInterval(() => {
+        if (index >= messages.length) { clearInterval(iv); return; }
+        showNext();
+      }, 1200);
+    }
+
+    function reset() {
+      index = 0;
+      messages.forEach(m => { m.style.display = 'none'; m.style.animation = ''; });
+      if (typingEl) typingEl.style.display = 'none';
+      updateProgress();
+    }
+
+    // Bind controls
+    const nextBtn  = $('.chat-next-btn',  containerEl);
+    const allBtn   = $('.chat-all-btn',   containerEl);
+    const resetBtn = $('.chat-reset-btn', containerEl);
+    if (nextBtn)  nextBtn.addEventListener('click',  showNext);
+    if (allBtn)   allBtn.addEventListener('click',   showAll);
+    if (resetBtn) resetBtn.addEventListener('click', reset);
+
+    updateProgress();
+  }
+
+  $$('.chat-window').forEach(el => initChat(el));
+
+  /* ── FLOW ANIMATION ENGINE ─────────────────────────────────── */
+  function initFlow(containerEl) {
+    if (!containerEl) return;
+    const stepsData  = JSON.parse(containerEl.dataset.steps || '[]');
+    const labelEl    = $('.flow-step-label', containerEl);
+    const progressEl = $('.flow-progress',   containerEl);
+    const packet     = $('.flow-packet',     containerEl);
+    let step = 0;
+
+    function updateProgress() {
+      if (progressEl) progressEl.textContent = 'Step ' + step + ' / ' + stepsData.length;
+    }
+
+    function animatePacket(fromId, toId) {
+      if (!packet) return;
+      const fromEl = $('#' + fromId);
+      const toEl   = $('#' + toId);
+      if (!fromEl || !toEl) return;
+      const fromR = fromEl.getBoundingClientRect();
+      const toR   = toEl.getBoundingClientRect();
+      const contR = containerEl.getBoundingClientRect();
+      const fx = fromR.left + fromR.width / 2  - contR.left;
+      const fy = fromR.top  + fromR.height / 2 - contR.top;
+      const tx = toR.left   + toR.width / 2    - contR.left;
+      const ty = toR.top    + toR.height / 2   - contR.top;
+      packet.style.setProperty('--packet-from-x', fx + 'px');
+      packet.style.setProperty('--packet-from-y', fy + 'px');
+      packet.style.setProperty('--packet-to-x',   tx + 'px');
+      packet.style.setProperty('--packet-to-y',   ty + 'px');
+      packet.style.display    = 'block';
+      packet.style.animation  = 'none';
+      packet.offsetHeight; // reflow
+      packet.style.animation  = 'packetMove 0.8s var(--ease-in-out) forwards';
+      setTimeout(() => { packet.style.display = 'none'; }, 850);
+    }
+
+    function next() {
+      if (step >= stepsData.length) return;
+      const s = stepsData[step];
+      $$('.flow-actor', containerEl).forEach(a => a.classList.remove('active'));
+      if (s.highlight) {
+        const hEl = $('#' + s.highlight, containerEl) || $('#flow-' + s.highlight);
+        if (hEl) hEl.classList.add('active');
+      }
+      if (s.packet && s.from && s.to) animatePacket('flow-' + s.from, 'flow-' + s.to);
+      if (labelEl) labelEl.textContent = s.label || '';
+      step++;
+      updateProgress();
+    }
+
+    function reset() {
+      step = 0;
+      $$('.flow-actor', containerEl).forEach(a => a.classList.remove('active'));
+      if (labelEl) labelEl.textContent = 'Click "Next Step" to begin';
+      if (packet)  packet.style.display = 'none';
+      updateProgress();
+    }
+
+    const nextBtn  = $('.flow-next-btn',  containerEl);
+    const resetBtn = $('.flow-reset-btn', containerEl);
+    if (nextBtn)  nextBtn.addEventListener('click',  next);
+    if (resetBtn) resetBtn.addEventListener('click', reset);
+
+    updateProgress();
+  }
+
+  $$('.flow-animation').forEach(el => initFlow(el));
+
+  /* ── ARCHITECTURE DIAGRAM ──────────────────────────────────── */
+  $$('.arch-component').forEach(comp => {
+    comp.addEventListener('click', function () {
+      const diagram = this.closest('.arch-diagram');
+      $$('.arch-component', diagram).forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+      const descEl = $('.arch-description', diagram);
+      if (descEl) descEl.textContent = this.dataset.desc || '';
+    });
+  });
+
+  /* ── BUG CHALLENGE ─────────────────────────────────────────── */
+  window.checkBugLine = function (el, isCorrect) {
+    const challenge = el.closest('.bug-challenge');
+    const feedback  = $('.bug-feedback', challenge);
+    if (isCorrect) {
+      el.classList.add('correct');
+      feedback.innerHTML  = '<strong>Found it!</strong> ' + (el.dataset.explanation || '');
+      feedback.className  = 'bug-feedback show success';
+      $$('.bug-line', challenge).forEach(l => l.style.pointerEvents = 'none');
+    } else {
+      el.classList.add('incorrect');
+      feedback.innerHTML  = (el.dataset.hint || 'Not this line — keep looking...');
+      feedback.className  = 'bug-feedback show error';
+      setTimeout(() => {
+        el.classList.remove('incorrect');
+        feedback.className = 'bug-feedback';
+      }, 1800);
+    }
+  };
+
+  /* ── LAYER TOGGLE ──────────────────────────────────────────── */
+  window.showLayer = function (layerId, btn) {
+    const demo = btn ? btn.closest('.layer-demo') : null;
+    if (!demo) return;
+    $$('.layer', demo).forEach(l => l.style.display = 'none');
+    $$('.layer-tab', demo).forEach(t => t.classList.remove('active'));
+    const layer = $('#' + layerId);
+    if (layer) layer.style.display = 'block';
+    btn.classList.add('active');
+  };
+
+})();
+  </script>
+</body>
+</html>
