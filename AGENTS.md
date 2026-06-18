@@ -17,7 +17,20 @@ is public, so **never commit secrets or internal identifiers**.
 4. **Add a card to `index.html`** so the new course shows on the menu. Copy an existing
    `<a class="card">` block and update its `href`, `--accent` color, icon, title, description, and the
    module-count badge.
-5. **Commit + push to `main`.** Pages redeploys automatically (~1 min).
+5. **Add the "All courses" home button** to the course's top bar so readers can get back to the menu.
+   The skill-generated nav is `<div class="nav-inner"><span class="nav-title">…</span><div class="nav-dots">…</div></div>`.
+   Wrap the title in a `.nav-left` group with a home link in front of it, leaving `.nav-dots` as the
+   second flex child:
+   ```html
+   <div class="nav-left">
+     <a class="nav-home" href="index.html" aria-label="Back to all courses" title="All courses"><span class="nav-home-arrow" aria-hidden="true">&larr;</span><span class="nav-home-label">All courses</span></a>
+     <span class="nav-title">…</span>
+   </div>
+   ```
+   Then add the `.nav-left` / `.nav-home` CSS (just before `.nav-dots {`) and a
+   `.nav-home-label { display: none; }` rule inside the `max-width: 480px` media query (collapses to
+   just the arrow on phones). Copy these from any existing course — they're identical across all of them.
+6. **Commit + push to `main`.** Pages redeploys automatically (~1 min).
 
 ## Access it (GitHub Pages)
 
