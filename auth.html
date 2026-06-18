@@ -1,0 +1,2844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication &amp; Authorization — VS Platform</title>
+
+  <!-- Google Fonts: Bricolage Grotesque · DM Sans · JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+/* =============================================================
+   CODEBASE-TO-COURSE — COMPLETE DESIGN SYSTEM
+   Copy this file verbatim into the course output directory.
+   Never regenerate it — customize only via :root overrides
+   in _base.html (accent color only).
+   ============================================================= */
+
+/* ── GOOGLE FONTS (loaded via _base.html <head>) ───────────────
+   Bricolage Grotesque · DM Sans · JetBrains Mono
+   ──────────────────────────────────────────────────────────── */
+
+/* ── DESIGN TOKENS ─────────────────────────────────────────── */
+:root {
+  /* BACKGROUNDS */
+  --color-bg:             #FAF7F2;
+  --color-bg-warm:        #F5F0E8;
+  --color-bg-code:        #1E1E2E;
+  --color-text:           #2C2A28;
+  --color-text-secondary: #6B6560;
+  --color-text-muted:     #9E9790;
+  --color-border:         #E5DFD6;
+  --color-border-light:   #EEEBE5;
+  --color-surface:        #FFFFFF;
+  --color-surface-warm:   #FDF9F3;
+
+  /* ACCENT — overridden per course in _base.html */
+  --color-accent:         #D94F30;
+  --color-accent-hover:   #C4432A;
+  --color-accent-light:   #FDEEE9;
+  --color-accent-muted:   #E8836C;
+
+  /* SEMANTIC */
+  --color-success:        #2D8B55;
+  --color-success-light:  #E8F5EE;
+  --color-error:          #C93B3B;
+  --color-error-light:    #FDE8E8;
+  --color-info:           #2A7B9B;
+  --color-info-light:     #E4F2F7;
+
+  /* ACTOR COLORS */
+  --color-actor-1:        #D94F30;
+  --color-actor-2:        #2A7B9B;
+  --color-actor-3:        #7B6DAA;
+  --color-actor-4:        #D4A843;
+  --color-actor-5:        #2D8B55;
+
+  /* FONTS */
+  --font-display: 'Bricolage Grotesque', Georgia, serif;
+  --font-body:    'DM Sans', -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* TYPE SCALE */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+
+  /* LINE HEIGHTS */
+  --leading-tight:  1.15;
+  --leading-snug:   1.3;
+  --leading-normal: 1.6;
+  --leading-loose:  1.8;
+
+  /* SPACING */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* LAYOUT */
+  --content-width:      800px;
+  --content-width-wide: 1000px;
+  --nav-height:         50px;
+
+  /* RADII */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-full: 9999px;
+
+  /* SHADOWS (warm-tinted, never pure black) */
+  --shadow-sm: 0 1px 2px rgba(44,42,40,0.05);
+  --shadow-md: 0 4px 12px rgba(44,42,40,0.08);
+  --shadow-lg: 0 8px 24px rgba(44,42,40,0.10);
+  --shadow-xl: 0 16px 48px rgba(44,42,40,0.12);
+
+  /* EASING */
+  --ease-out:    cubic-bezier(0.16,1,0.3,1);
+  --ease-in-out: cubic-bezier(0.65,0,0.35,1);
+
+  /* DURATIONS */
+  --duration-fast:   150ms;
+  --duration-normal: 300ms;
+  --duration-slow:   500ms;
+  --stagger-delay:   120ms;
+}
+
+/* ── RESET & BASE ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  line-height: var(--leading-normal);
+  background: var(--color-bg);
+  background-image: radial-gradient(
+    ellipse at 20% 50%,
+    rgba(217,79,48,0.03) 0%,
+    transparent 50%
+  );
+}
+
+/* ── SCROLLBAR ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+/* ── CODE GLOBALS ───────────────────────────────────────────── */
+pre, code {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: hidden;
+}
+.translation-code::-webkit-scrollbar,
+pre::-webkit-scrollbar { display: none; }
+
+/* Catppuccin-inspired syntax highlighting */
+.code-keyword  { color: #CBA6F7; }
+.code-string   { color: #A6E3A1; }
+.code-function { color: #89B4FA; }
+.code-comment  { color: #6C7086; }
+.code-number   { color: #FAB387; }
+.code-property { color: #F9E2AF; }
+.code-operator { color: #94E2D5; }
+.code-tag      { color: #F38BA8; }
+.code-attr     { color: #F9E2AF; }
+.code-value    { color: #A6E3A1; }
+.code-line     { display: block; }
+
+/* ── NAV ────────────────────────────────────────────────────── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-height);
+  z-index: 1000;
+  background: rgba(250,247,242,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.progress-bar {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--color-accent);
+  transition: width 100ms linear;
+}
+
+.nav-inner {
+  max-width: var(--content-width-wide);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.nav-title {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+.nav-dots {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.nav-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--color-text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  position: relative;
+}
+.nav-dot::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-bg-code);
+  color: #CDD6F4;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+}
+.nav-dot:hover::after { opacity: 1; }
+.nav-dot.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+.nav-dot.visited {
+  border-color: var(--color-accent-muted);
+  background: var(--color-accent-muted);
+}
+
+/* ── MODULE STRUCTURE ───────────────────────────────────────── */
+.module {
+  min-height: 100dvh;
+  min-height: 100vh;
+  scroll-snap-align: start;
+  padding: var(--space-16) var(--space-6);
+  padding-top: calc(var(--nav-height) + var(--space-12));
+}
+
+.module-content {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.module-header { margin-bottom: var(--space-12); }
+
+.module-number {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-6xl);
+  font-weight: 800;
+  color: var(--color-accent);
+  opacity: 0.15;
+  line-height: 1;
+  margin-bottom: var(--space-2);
+}
+
+.module-title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+}
+
+.module-subtitle {
+  margin-top: var(--space-3);
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-snug);
+}
+
+.screen {
+  margin-bottom: var(--space-16);
+}
+
+.screen-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-6);
+  line-height: var(--leading-snug);
+}
+
+p { margin-bottom: var(--space-4); }
+p:last-child { margin-bottom: 0; }
+
+/* ── SCROLL ANIMATIONS ──────────────────────────────────────── */
+.animate-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+.animate-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.stagger-children > .animate-in {
+  transition-delay: calc(var(--stagger-index, 0) * var(--stagger-delay));
+}
+
+/* ── TRANSLATION BLOCKS ─────────────────────────────────────── */
+.translation-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+
+.translation-code {
+  background: var(--color-bg-code);
+  color: #CDD6F4;
+  padding: var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.translation-english {
+  background: var(--color-surface-warm);
+  padding: var(--space-6);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  border-left: 3px solid var(--color-accent);
+}
+
+.translation-label {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+}
+.translation-english .translation-label {
+  position: static;
+  display: block;
+  margin-bottom: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.translation-lines .tl {
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+}
+.translation-lines .tl:last-child { border-bottom: none; }
+
+/* ── QUIZ ───────────────────────────────────────────────────── */
+.quiz-container {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+
+.quiz-question-block { margin-bottom: var(--space-8); }
+.quiz-question-block:last-of-type { margin-bottom: 0; }
+
+.quiz-question {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  line-height: var(--leading-snug);
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  transition: border-color var(--duration-fast), background var(--duration-fast);
+}
+.quiz-option:hover:not(:disabled) { border-color: var(--color-accent-muted); }
+.quiz-option.selected { border-color: var(--color-accent); background: var(--color-accent-light); }
+.quiz-option.correct  { border-color: var(--color-success); background: var(--color-success-light); }
+.quiz-option.incorrect{ border-color: var(--color-error);   background: var(--color-error-light); }
+.quiz-option:disabled { cursor: default; }
+
+.quiz-option-radio {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  flex-shrink: 0;
+  transition: all var(--duration-fast);
+}
+.quiz-option.selected .quiz-option-radio {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  box-shadow: inset 0 0 0 3px white;
+}
+.quiz-option.correct .quiz-option-radio  { border-color: var(--color-success); background: var(--color-success); box-shadow: inset 0 0 0 3px white; }
+.quiz-option.incorrect .quiz-option-radio{ border-color: var(--color-error);   background: var(--color-error);   box-shadow: inset 0 0 0 3px white; }
+
+.quiz-feedback {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height var(--duration-normal), opacity var(--duration-normal);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+.quiz-feedback.show {
+  max-height: 200px;
+  opacity: 1;
+  padding: var(--space-3);
+  margin-top: var(--space-2);
+}
+.quiz-feedback.success { background: var(--color-success-light); color: var(--color-success); }
+.quiz-feedback.error   { background: var(--color-error-light);   color: var(--color-error); }
+.quiz-feedback.warning { background: var(--color-info-light);    color: var(--color-info); }
+
+.quiz-check-btn, .quiz-reset-btn {
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background var(--duration-fast), transform var(--duration-fast);
+}
+.quiz-check-btn {
+  background: var(--color-accent);
+  color: white;
+  margin-right: var(--space-3);
+}
+.quiz-check-btn:hover { background: var(--color-accent-hover); transform: translateY(-1px); }
+.quiz-reset-btn {
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+.quiz-reset-btn:hover { border-color: var(--color-accent-muted); }
+
+/* Scenario block */
+.scenario-block { margin-bottom: var(--space-6); }
+.scenario-context {
+  background: var(--color-info-light);
+  border-left: 3px solid var(--color-info);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.scenario-label {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-info);
+  margin-bottom: var(--space-2);
+}
+
+/* ── DRAG AND DROP ──────────────────────────────────────────── */
+.dnd-container { margin: var(--space-8) 0; }
+.dnd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+.dnd-chip {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: grab;
+  user-select: none;
+  transition: opacity var(--duration-fast), transform var(--duration-fast);
+}
+.dnd-chip:active { cursor: grabbing; transform: scale(1.05); }
+.dnd-chip.dragging { opacity: 0.4; }
+.dnd-chip.placed { opacity: 0.3; pointer-events: none; }
+
+.dnd-zones { display: flex; flex-direction: column; gap: var(--space-4); }
+.dnd-zone {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: var(--color-surface);
+}
+.dnd-zone-label { font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+.dnd-zone-target {
+  min-height: 40px;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  transition: border-color var(--duration-fast), background var(--duration-fast);
+}
+.dnd-zone-target.drag-over { border-color: var(--color-accent); background: var(--color-accent-light); }
+.dnd-zone-target.correct-placed { border-color: var(--color-success); background: var(--color-success-light); color: var(--color-success); font-weight: 600; }
+.dnd-zone-target.incorrect-placed{ border-color: var(--color-error); background: var(--color-error-light); }
+.touch-ghost {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* ── GROUP CHAT ─────────────────────────────────────────────── */
+.chat-window {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  margin: var(--space-8) 0;
+}
+
+.chat-messages {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 200px;
+}
+
+.chat-message {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  animation: fadeSlideUp 0.3s var(--ease-out);
+}
+
+.chat-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.chat-bubble {
+  max-width: 75%;
+  background: var(--color-bg-warm);
+  border-radius: var(--radius-md) var(--radius-md) var(--radius-md) 4px;
+  padding: var(--space-3) var(--space-4);
+}
+
+.chat-sender {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chat-bubble p {
+  font-size: var(--text-sm);
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+.chat-typing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-6) var(--space-4);
+}
+
+.chat-typing-dots {
+  display: flex;
+  gap: var(--space-1);
+  background: var(--color-bg-warm);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+}
+
+.typing-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  animation: typingBounce 1.4s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+.chat-controls {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--color-surface-warm);
+}
+.chat-progress {
+  margin-left: auto;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── FLOW / DATA FLOW ANIMATION ─────────────────────────────── */
+.flow-animation {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+
+.flow-actors {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.flow-actor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.flow-actor-icon {
+  width: 56px; height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-warm);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.flow-actor span {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  text-align: center;
+}
+
+.flow-actor.active .flow-actor-icon {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+  box-shadow: 0 0 0 3px var(--color-accent-light), 0 0 20px rgba(217,79,48,0.15);
+  transform: scale(1.1);
+}
+
+.flow-packet {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  position: absolute;
+  pointer-events: none;
+  display: none;
+  box-shadow: 0 0 8px rgba(217,79,48,0.5);
+}
+
+.flow-step-label {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  min-height: 2.5em;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-warm);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-6);
+  line-height: var(--leading-normal);
+}
+
+.flow-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.flow-progress {
+  margin-left: auto;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── ARCHITECTURE DIAGRAM ───────────────────────────────────── */
+.arch-diagram {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+.arch-zone {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+.arch-zone-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+.arch-component {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  margin: var(--space-2);
+  transition: all var(--duration-fast);
+  font-size: var(--text-sm);
+}
+.arch-component:hover, .arch-component.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+.arch-icon { font-size: 1.5rem; }
+.arch-description {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-bg-warm);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  min-height: 2.5em;
+}
+
+/* ── LAYER TOGGLE ───────────────────────────────────────────── */
+.layer-demo { margin: var(--space-8) 0; }
+.layer-tabs {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.layer-tab {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast);
+}
+.layer-tab.active {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+.layer-viewport {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+.layer-description {
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── BUG CHALLENGE ──────────────────────────────────────────── */
+.bug-challenge {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+  margin: var(--space-8) 0;
+}
+.bug-challenge h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+}
+.bug-code {
+  background: var(--color-bg-code);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+.bug-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background var(--duration-fast);
+}
+.bug-line:hover { background: rgba(255,255,255,0.05); }
+.bug-line.correct  { background: rgba(45,139,85,0.2); }
+.bug-line.incorrect{ background: rgba(201,59,59,0.2); }
+.line-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: #6C7086;
+  min-width: 1.5em;
+  text-align: right;
+  user-select: none;
+}
+.bug-line code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: #CDD6F4;
+}
+.bug-feedback {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height var(--duration-normal), opacity var(--duration-normal);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+.bug-feedback.show {
+  max-height: 200px;
+  opacity: 1;
+  padding: var(--space-3);
+}
+.bug-feedback.success { background: var(--color-success-light); color: var(--color-success); }
+.bug-feedback.error   { background: var(--color-error-light);   color: var(--color-error); }
+
+/* ── CALLOUT BOXES ──────────────────────────────────────────── */
+.callout {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  margin: var(--space-6) 0;
+  border-left: 4px solid;
+}
+.callout-accent  { background: var(--color-accent-light);  border-color: var(--color-accent); }
+.callout-info    { background: var(--color-info-light);    border-color: var(--color-info); }
+.callout-warning { background: var(--color-error-light);   border-color: var(--color-error); }
+
+.callout-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
+.callout-title { display: block; font-weight: 700; margin-bottom: var(--space-1); }
+.callout-content p { font-size: var(--text-sm); margin: 0; color: var(--color-text-secondary); }
+
+/* ── PATTERN / FEATURE CARDS ────────────────────────────────── */
+.pattern-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-6) 0;
+}
+.pattern-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+  border-top: 3px solid var(--color-accent);
+  transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal);
+}
+.pattern-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.pattern-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  margin-bottom: var(--space-3);
+}
+.pattern-title {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+.pattern-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-normal);
+  margin: 0;
+}
+
+/* ── FLOW DIAGRAMS (static) ─────────────────────────────────── */
+.flow-steps {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin: var(--space-6) 0;
+}
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+.flow-step-num {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flow-step p { font-size: var(--text-sm); color: var(--color-text-secondary); max-width: 120px; margin: 0; }
+.flow-arrow {
+  font-size: var(--text-xl);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* ── BADGE / CONFIG LIST ────────────────────────────────────── */
+.badge-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: var(--space-6) 0;
+}
+.badge-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  transition: border-color var(--duration-fast);
+}
+.badge-item:hover { border-color: var(--color-accent-muted); }
+.badge-code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: var(--color-bg-code);
+  color: #CBA6F7;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.badge-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── GLOSSARY TOOLTIPS ──────────────────────────────────────── */
+.term {
+  border-bottom: 1.5px dashed var(--color-accent-muted);
+  cursor: pointer;
+}
+.term:hover, .term.active {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.term-tooltip {
+  position: fixed;
+  background: var(--color-bg-code);
+  color: #CDD6F4;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-family: var(--font-body);
+  line-height: var(--leading-normal);
+  width: max(200px, min(320px, 80vw));
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-fast);
+  z-index: 10000;
+}
+.term-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-bg-code);
+}
+.term-tooltip.visible { opacity: 1; }
+.term-tooltip.flip::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--color-bg-code);
+}
+
+/* ── VISUAL FILE TREE ───────────────────────────────────────── */
+.file-tree {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  margin: var(--space-6) 0;
+}
+.ft-folder, .ft-file {
+  padding: var(--space-2) var(--space-3);
+  border-left: 2px solid var(--color-border-light);
+  margin-left: var(--space-4);
+}
+.ft-folder > .ft-name { color: var(--color-accent); font-weight: 600; }
+.ft-folder > .ft-name::before { content: '📁 '; }
+.ft-file > .ft-name::before { content: '📄 '; }
+.ft-desc {
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+  margin-left: var(--space-2);
+  font-size: var(--text-xs);
+}
+.ft-children { margin-left: var(--space-4); }
+
+/* ── ICON-LABEL ROWS ────────────────────────────────────────── */
+.icon-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-6) 0;
+}
+.icon-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.icon-row strong { display: block; font-weight: 600; }
+.icon-row p { margin: var(--space-1) 0 0; color: var(--color-text-secondary); font-size: var(--text-sm); }
+.icon-circle {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* ── NUMBERED STEP CARDS ────────────────────────────────────── */
+.step-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-6) 0;
+}
+.step-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-accent);
+  box-shadow: var(--shadow-sm);
+}
+.step-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  flex-shrink: 0;
+}
+.step-body strong { display: block; font-weight: 600; margin-bottom: var(--space-1); }
+.step-body p { margin: 0; color: var(--color-text-secondary); font-size: var(--text-sm); }
+
+/* ── SHARED BUTTON STYLE ────────────────────────────────────── */
+.btn {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast);
+  color: var(--color-text-secondary);
+}
+.btn:hover { border-color: var(--color-accent-muted); color: var(--color-accent); }
+.btn-primary {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+.btn-primary:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); color: white; }
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --text-4xl: 1.875rem;
+    --text-5xl: 2.25rem;
+    --text-6xl: 3rem;
+  }
+  .translation-block { grid-template-columns: 1fr; }
+  .translation-english { border-left: none; border-top: 3px solid var(--color-accent); }
+  .pattern-cards { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --text-4xl: 1.5rem;
+    --text-5xl: 1.875rem;
+    --text-6xl: 2.25rem;
+  }
+  .module { padding: var(--space-8) var(--space-4); }
+  .pattern-cards { grid-template-columns: 1fr; }
+  .flow-steps { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+  .nav-title { max-width: 140px; }
+}
+
+/* ── KEYFRAMES ──────────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%           { transform: translateY(-6px); }
+}
+
+@keyframes packetMove {
+  from { left: var(--packet-from-x); top: var(--packet-from-y); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  to   { left: var(--packet-to-x);   top: var(--packet-to-y);   opacity: 0; }
+}
+  </style>
+
+  <style>
+    :root {
+      --color-accent:       #D4A843;
+      --color-accent-hover: #BF9530;
+      --color-accent-light: #FDF5E0;
+      --color-accent-muted: #E0C070;
+    }
+  </style>
+
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="progress-bar" id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="nav-inner">
+      <span class="nav-title">Auth &amp; Authz</span>
+      <div class="nav-dots" id="nav-dots" role="tablist">
+        <button class="nav-dot" data-target="module-1" data-tooltip="The doorman &amp; the badge" role="tab" aria-label="Module 1: The doorman and the badge"></button>
+        <button class="nav-dot" data-target="module-2" data-tooltip="Meet the actors" role="tab" aria-label="Module 2: Meet the actors"></button>
+        <button class="nav-dot" data-target="module-3" data-tooltip="Getting in" role="tab" aria-label="Module 3: Getting in (authentication)"></button>
+        <button class="nav-dot" data-target="module-4" data-tooltip="Crossing the gateway" role="tab" aria-label="Module 4: Crossing the gateway"></button>
+        <button class="nav-dot" data-target="module-5" data-tooltip="Who-can-do-what" role="tab" aria-label="Module 5: Who-can-do-what (authorization)"></button>
+        <button class="nav-dot" data-target="module-6" data-tooltip="When it breaks" role="tab" aria-label="Module 6: When it breaks and the big picture"></button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- modules/*.html content is assembled here by build.sh -->
+<section class="module" id="module-1" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">01</span>
+      <h1 class="module-title">The doorman &amp; the badge</h1>
+      <p class="module-subtitle">You click "Sign In" and land inside the app. Here's the hidden journey that makes that one click safe — and why it touches half a dozen separate programs.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Two questions, every single time</h2>
+        <p>Every time you open a page in the VS Platform, the system quietly asks two completely different questions about you. Almost all of security comes down to keeping these two apart.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">🪪</div>
+            <h4 class="pattern-title">Who are you?</h4>
+            <p class="pattern-desc">Proving your identity. This is <span class="term" data-definition="Authentication answers 'who are you?' — it verifies identity, usually by checking a password or a login at a trusted provider. Think of a bouncer checking your ID at the door.">authentication</span> — the doorman checking your ID before you walk in.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🎟️</div>
+            <h4 class="pattern-title">What may you do?</h4>
+            <p class="pattern-desc">Deciding your permissions. This is <span class="term" data-definition="Authorization answers 'what are you allowed to do?' — it decides which actions and data you can access, after your identity is already known. Like a wristband that opens some doors but not others.">authorization</span> — the wristband that opens some doors in the building but not others.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">💡</div>
+          <div class="callout-content">
+            <strong class="callout-title">The whole course in one sentence</strong>
+            <p>Authentication is the ID check at the door; authorization is the wristband that decides which rooms you can enter. Mix them up and you get security bugs — keep them separate and the whole system stays sane.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">What actually happens when you click "Sign In"</h2>
+        <p>You're looking at the VS Platform <span class="term" data-definition="A SPA (Single-Page Application) is a website that loads once and then updates the screen with JavaScript instead of reloading whole pages. The VS Platform front-end is a SPA built with Vue.">single-page app</span> in your browser. You click <strong>Sign In</strong>. From your point of view you blink and you're in. Under the hood, this happened:</p>
+
+        <div class="step-cards stagger-children">
+          <div class="step-card animate-in">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <strong>Your browser sends you to the login page</strong>
+              <p>Not the app's own login — a separate, dedicated identity service called Keycloak. The app never sees your password.</p>
+            </div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <strong>You type your password into Keycloak</strong>
+              <p>Keycloak verifies it and hands your browser a <span class="term" data-definition="A token is a small, digitally-signed piece of data that proves who you are and what you may do — like a tamper-proof festival wristband. The server can check it is genuine without phoning anyone.">token</span>: a signed digital badge.</p>
+            </div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <strong>Your browser shows that badge to get data</strong>
+              <p>Every request to load employees, departments, anything — carries the badge so the server knows it's really you.</p>
+            </div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <strong>The server checks the badge, then checks your wristband</strong>
+              <p>Is the badge genuine? (authentication) Are you allowed to see this? (authorization) Only then does data come back.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Why is this spread across so many programs?</h2>
+        <p>Here's the surprise for a lot of people: this isn't one login function in one file. In the VS Platform, the work is split across <strong>eight separate code repositories</strong>, each a different program with one job.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🧩</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why split it up?</strong>
+            <p>Each part can be built, secured, and updated on its own. The one program that holds the most dangerous secrets stays tiny and isolated, so a bug somewhere else can't leak them. Engineers call this <span class="term" data-definition="Separation of concerns means giving each part of a system one clear responsibility, instead of one giant piece doing everything. It makes systems easier to change safely.">separation of concerns</span>.</p>
+          </div>
+        </div>
+
+        <p>In the next module you'll meet all eight characters by name. For now, just hold this picture: a <strong>doorman</strong> (Keycloak) issues a <strong>badge</strong> (a token), and a <strong>border guard</strong> (the gateway) checks it before letting anything through.</p>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🧭</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why a non-coder should care</strong>
+            <p>When you ask an AI assistant to "add a page that shows payroll," knowing this split lets you say exactly where the rule lives: "the API should require a payroll permission." That's the difference between vague requests and instructions an AI can actually follow.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Quick check</h2>
+        <div class="quiz-container" id="quiz-module1">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly. Verifying the password is authentication (who you are). Deciding you may read payroll but not edit it is authorization (what you may do)."
+               data-explanation-wrong="Re-read the two cards above. One question is about proving identity; the other is about which actions are allowed once identity is known.">
+            <h3 class="quiz-question">A user logs in successfully, but when they open the Payroll page they get "access denied." Which of the two questions failed?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Authentication — the system couldn't tell who they were</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Authorization — it knew who they were but they lacked permission</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Both failed at the same time</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Right. The app deliberately never handles your password — a dedicated identity service does, so a bug in the app can never leak it."
+               data-explanation-wrong="Look again at steps 1 and 2. Notice where the password is actually typed in.">
+            <h3 class="quiz-question">Where does your password get typed in?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Into the VS Platform app itself</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Into the database directly</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Into a separate, dedicated identity service (Keycloak)</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module1')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module1')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-2" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">02</span>
+      <h1 class="module-title">Meet the actors</h1>
+      <p class="module-subtitle">Eight repositories, each a small program with one job. Think of them as the cast of a heist movie — every member has a single specialty, and the plan only works when they cooperate.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The cast list</h2>
+        <p>Each of these is a separate <span class="term" data-definition="A repository (or 'repo') is a self-contained folder of code with its own history. Here, each repo is built and deployed independently, like separate apps that agree on how to talk to each other.">repository</span> named <code>vs-plat-*</code>. Hover any term you don't recognize — there's a definition behind every dashed underline.</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">🪪</div>
+            <div>
+              <strong>Keycloak — the identity provider</strong>
+              <p><code>vs-plat-identity</code> · The doorman. Checks your password and issues the signed badge. The only place passwords live.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-2)">🖥️</div>
+            <div>
+              <strong>Web client — the front-end you see</strong>
+              <p><code>vs-plat-web-client</code> · A <span class="term" data-definition="Vue is a popular framework for building interactive web front-ends. It manages what you see on screen and reacts to your clicks.">Vue</span> single-page app. Starts the login, holds your badge for the tab, asks the back-end for data.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">🛂</div>
+            <div>
+              <strong>Gateway — the border guard</strong>
+              <p><code>vs-plat-gateway</code> · The single front door to the back-end. Checks every badge and decides what gets forwarded inward.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🔁</div>
+            <div>
+              <strong>STS — the badge exchange office</strong>
+              <p><code>vs-plat-sts</code> · The <span class="term" data-definition="A Security Token Service (STS) issues and swaps tokens. Here it trades your 'front-door' badge for a badge stamped for one specific inner service.">Security Token Service</span>. Swaps one badge for another, stamped for a specific inner service. Holds the crown-jewel secrets.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-5)">🗂️</div>
+            <div>
+              <strong>Authz — the records office</strong>
+              <p><code>vs-plat-authz</code> · The source of truth for who belongs to which organization and what they may do. Backed by a <span class="term" data-definition="A database is an organized store of data that programs can query quickly. PostgreSQL ('Postgres') is the specific database used here.">database</span>.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-1)">⚙️</div>
+            <div>
+              <strong>Business API — the actual app logic</strong>
+              <p><code>vs-plat-app</code> · Serves employees, departments, and the real data. Enforces a permission check on every endpoint.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">📦</div>
+            <div>
+              <strong>Shared auth library — the rulebook</strong>
+              <p><code>vs-plat-packages</code> · <span class="term" data-definition="A library (or package) is reusable code that many programs share, so they all behave the same way without copy-pasting. Here it holds the common auth logic.">Reusable code</span> every service imports so they all validate badges and check permissions identically.</p>
+            </div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-4)">🎬</div>
+            <div>
+              <strong>Orchestrator — the director</strong>
+              <p><code>vs-plat-orchestrator</code> · Boots all the others together with the right wiring for local development, using .NET Aspire.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The glue: everyone trusts the same doorman</h2>
+        <p>For badges to mean anything, every service has to agree on <em>who is allowed to issue them</em>. The orchestrator guarantees this by stamping every service with the same <span class="term" data-definition="The issuer (or 'authority') is the trusted service that signs tokens. Services only accept badges signed by this exact issuer — like only trusting passports from one government.">issuer</span> address at startup.</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">var</span> authority = <span class="code-string">$"http://localhost:8080/realms/{realm}"</span>;</span>
+<span class="code-line"><span class="code-keyword">return</span> resource</span>
+<span class="code-line">  .<span class="code-function">WithEnvironment</span>(<span class="code-string">"VSPlatformAuth__Authority"</span>, authority)</span>
+<span class="code-line">  .<span class="code-function">WithEnvironment</span>(<span class="code-string">"VSPlatformAuth__AdditionalValidIssuers__0"</span>, authority)</span>
+<span class="code-line">  .<span class="code-function">WithEnvironment</span>(<span class="code-string">"VSPlatformAuth__RequireHttpsMetadata"</span>, <span class="code-string">"false"</span>);</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Build the one trusted doorman's address (Keycloak, on the local machine).</p>
+              <p class="tl">Take each service being started up...</p>
+              <p class="tl">...and tell it: "this is the only issuer whose badges you trust."</p>
+              <p class="tl">List that same issuer as an accepted signer, so older and newer badges both validate.</p>
+              <p class="tl">Allow plain web addresses — true only for local development, never in production.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🔑</div>
+          <div class="callout-content">
+            <strong class="callout-title">One source of trust</strong>
+            <p>Because every service is handed the <em>same</em> issuer, a badge signed by Keycloak is accepted everywhere, and a forged badge is accepted nowhere. This single shared fact is what holds the whole platform together.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Match each actor to its job</h2>
+        <p>Drag each character onto the role it plays. (On a phone, tap and drag.)</p>
+
+        <div class="dnd-container" id="dnd-module2">
+          <div class="dnd-chips">
+            <div class="dnd-chip" draggable="true" data-answer="keycloak">Keycloak</div>
+            <div class="dnd-chip" draggable="true" data-answer="gateway">Gateway</div>
+            <div class="dnd-chip" draggable="true" data-answer="sts">STS</div>
+            <div class="dnd-chip" draggable="true" data-answer="authz">Authz</div>
+          </div>
+          <div class="dnd-zones">
+            <div class="dnd-zone" data-correct="keycloak">
+              <p class="dnd-zone-label">Checks your password and issues the original badge</p>
+              <div class="dnd-zone-target">Drop here</div>
+            </div>
+            <div class="dnd-zone" data-correct="gateway">
+              <p class="dnd-zone-label">The single front door that checks every badge before forwarding</p>
+              <div class="dnd-zone-target">Drop here</div>
+            </div>
+            <div class="dnd-zone" data-correct="sts">
+              <p class="dnd-zone-label">Swaps a badge for one stamped for a specific inner service</p>
+              <div class="dnd-zone-target">Drop here</div>
+            </div>
+            <div class="dnd-zone" data-correct="authz">
+              <p class="dnd-zone-label">The records office: who belongs to which org and may do what</p>
+              <div class="dnd-zone-target">Drop here</div>
+            </div>
+          </div>
+          <button class="btn" onclick="checkDnD('dnd-module2')">Check Matches</button>
+          <button class="btn" onclick="resetDnD('dnd-module2')">Reset</button>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Quick check</h2>
+        <div class="quiz-container" id="quiz-module2">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Right. Keeping the password-handler (Keycloak) separate from the app means a bug in the business app can never expose passwords — the app never even sees them."
+               data-explanation-wrong="Think about what's at stake if the program with the most users also held the most dangerous secrets.">
+            <h3 class="quiz-question">Why keep identity (Keycloak) in its own repo instead of building login into the business app?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>It makes the app load faster</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>So the riskiest secrets stay isolated and the app never touches passwords</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Because Vue can't handle passwords</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Exactly. If every service didn't share the same trusted issuer, a badge accepted by one could be rejected by another — and forged badges might slip through. The shared issuer is the anchor of trust."
+               data-explanation-wrong="Re-read 'One source of trust'. What breaks if two services disagree about who is allowed to sign badges?">
+            <h3 class="quiz-question">What would break if two back-end services were configured to trust <em>different</em> issuers?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>A valid badge might work on one service but be rejected by the other</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Nothing — issuers don't matter</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>The front-end would change colour</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module2')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module2')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-3" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">03</span>
+      <h1 class="module-title">Getting in</h1>
+      <p class="module-subtitle">How the password you type becomes a signed badge — without the app ever seeing the password. This is the authentication half of the story.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The redirect dance</h2>
+        <p>The pattern the platform uses is an industry standard called <span class="term" data-definition="OIDC (OpenID Connect) is a standard way for apps to let a trusted provider handle login and then hand back proof of who you are. Almost every 'Log in with Google/Microsoft' button uses it.">OpenID Connect</span>. The clever part is the <span class="term" data-definition="The Authorization Code flow logs you in at the identity provider, which hands your browser a short one-time code; the browser then trades that code for the actual token. The password never reaches the app.">Authorization Code flow</span>: your password goes only to Keycloak, and the app receives a badge instead.</p>
+
+        <p>Step through the dance — click <strong>Next Step</strong>:</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"You click Sign In inside the browser app."},
+          {"highlight":"flow-actor-2","label":"The browser sends you over to Keycloak, carrying a one-time PKCE puzzle.","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-2","label":"You type your password into Keycloak. The app never sees it."},
+          {"highlight":"flow-actor-1","label":"Keycloak sends your browser back, carrying a short-lived one-time code.","packet":true,"from":"actor-2","to":"actor-1"},
+          {"highlight":"flow-actor-2","label":"The browser swaps the code plus the PKCE answer for a real token.","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-1","label":"Done. The browser now holds a signed badge in memory, ready to use."}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1">
+              <div class="flow-actor-icon">🖥️</div>
+              <span>Browser (you)</span>
+            </div>
+            <div class="flow-actor" id="flow-actor-2">
+              <div class="flow-actor-icon">🪪</div>
+              <span>Keycloak</span>
+            </div>
+          </div>
+          <div class="flow-packet" id="flow-packet"></div>
+          <div class="flow-step-label" id="flow-label">Click "Next Step" to begin</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🧩</div>
+          <div class="callout-content">
+            <strong class="callout-title">What's PKCE, and why the puzzle?</strong>
+            <p><span class="term" data-definition="PKCE (Proof Key for Code Exchange) means the browser invents a secret at the start of login and must prove it owns that secret when redeeming the code. It stops an attacker who steals the one-time code from using it.">PKCE</span> is like mailing yourself half of a torn ticket before you leave. Even if someone snatches the one-time code in transit, they can't redeem it without the matching half only your browser holds.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">How the browser is configured for this</h2>
+        <p>The front-end sets up an OIDC helper once, telling it where the doorman lives and what kind of badge to request. This is the real configuration from the web client:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-keyword">export const</span> userManager = <span class="code-keyword">new</span> <span class="code-function">UserManager</span>({</span>
+<span class="code-line">  authority,</span>
+<span class="code-line">  <span class="code-property">client_id</span>: clientId,</span>
+<span class="code-line">  <span class="code-property">redirect_uri</span>: <span class="code-string">`${window.location.origin}/auth/callback`</span>,</span>
+<span class="code-line">  <span class="code-property">response_type</span>: <span class="code-string">'code'</span>,</span>
+<span class="code-line">  <span class="code-property">scope</span>: <span class="code-string">'openid profile email vs-context vs-platform-gateway'</span>,</span>
+<span class="code-line">  <span class="code-property">stateStore</span>: <span class="code-keyword">new</span> <span class="code-function">WebStorageStateStore</span>({ store: browserStorage }),</span>
+<span class="code-line">});</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Create one login helper for the whole app.</p>
+              <p class="tl"><code>authority</code> is the doorman's address (Keycloak).</p>
+              <p class="tl"><code>client_id</code> names this app so Keycloak knows who's asking.</p>
+              <p class="tl">After login, send the browser back to this exact page.</p>
+              <p class="tl"><code>'code'</code> chooses the safe Authorization Code flow.</p>
+              <p class="tl">The <span class="term" data-definition="A scope is a request for specific information or powers to be packed into the token — like ticking boxes on a form. 'profile email' asks for basic identity; 'vs-context' asks for organization details.">scope</span> lists what to pack into the badge: identity, email, org context, and front-door access.</p>
+              <p class="tl">Keep the login state in the browser tab's temporary storage.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">What's actually inside the badge?</h2>
+        <p>The badge is a <span class="term" data-definition="A JWT (JSON Web Token, said 'jot') is a token made of three dot-separated parts. The middle part holds readable facts ('claims'); the last part is a signature proving it wasn't tampered with.">JWT</span> — three parts separated by dots. Anyone can <em>read</em> the middle part, but only Keycloak can produce a valid signature, so nobody can forge or edit it.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)">
+            <div class="pattern-icon" style="background: var(--color-actor-2)">🏷️</div>
+            <h4 class="pattern-title">Header</h4>
+            <p class="pattern-desc">Bookkeeping: what kind of token this is and which signing key was used.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">📋</div>
+            <h4 class="pattern-title">Claims</h4>
+            <p class="pattern-desc">The facts: who you are, who the badge is for, when it expires, your org. Readable, not secret.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)">
+            <div class="pattern-icon" style="background: var(--color-actor-1)">✍️</div>
+            <h4 class="pattern-title">Signature</h4>
+            <p class="pattern-desc">Keycloak's tamper-proof seal. Change one letter of the claims and the seal no longer matches.</p>
+          </div>
+        </div>
+
+        <p>Decoded, the claims part of a real badge looks like this (sensitive values replaced with placeholders):</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CLAIMS (DECODED)</span>
+            <pre><code><span class="code-line">{</span>
+<span class="code-line">  <span class="code-property">"iss"</span>: <span class="code-string">"http://localhost:8080/realms/vs-platform"</span>,</span>
+<span class="code-line">  <span class="code-property">"aud"</span>: <span class="code-string">"vs-platform-gateway"</span>,</span>
+<span class="code-line">  <span class="code-property">"sub"</span>: <span class="code-string">"&lt;your-user-id&gt;"</span>,</span>
+<span class="code-line">  <span class="code-property">"preferred_username"</span>: <span class="code-string">"&lt;your-username&gt;"</span>,</span>
+<span class="code-line">  <span class="code-property">"org_id"</span>: <span class="code-string">"&lt;org-uuid&gt;"</span>,</span>
+<span class="code-line">  <span class="code-property">"exp"</span>: <span class="code-number">1735689600</span></span>
+<span class="code-line">}</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl"><code>iss</code> — who issued it: the one trusted doorman.</p>
+              <p class="tl"><span class="term" data-definition="The 'aud' (audience) claim names exactly which service the token is meant for. A service rejects any token whose audience isn't its own name — like a ticket stamped for one specific venue.">aud</span> — who it's <em>for</em>: the front door (gateway). This matters a lot in the next module.</p>
+              <p class="tl"><code>sub</code> — the subject: a stable id for you.</p>
+              <p class="tl">Your human-readable username.</p>
+              <p class="tl">Which organization this session is acting inside.</p>
+              <p class="tl"><span class="term" data-definition="The 'exp' (expiry) claim is a timestamp after which the token is dead. Short expiry limits the damage if a token is ever stolen.">exp</span> — the expiry time. After this moment the badge is worthless.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">🛡️</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why the badge lives only in memory</strong>
+            <p>The platform deliberately keeps tokens in the tab's memory and never in long-term browser storage. If a malicious script slipped onto the page (an <span class="term" data-definition="XSS (cross-site scripting) is an attack where bad JavaScript runs on your page and can read whatever the page can read. Keeping tokens out of permanent storage limits what such a script can steal.">XSS</span> attack), there's no saved token sitting on disk for it to grab, and the short expiry means anything stolen dies quickly.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Quick check</h2>
+        <div class="quiz-container" id="quiz-module3">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Correct. The password only ever travels to Keycloak. The app receives a one-time code and then a token — it never handles the password at all."
+               data-explanation-wrong="Walk back through the redirect dance. Notice which actor is on screen at the moment the password is typed.">
+            <h3 class="quiz-question">A colleague worries the business app could leak passwords in its logs. Based on the login flow, what do you tell them?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>It's a real risk — the app receives the password and could log it</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>It can't — the password only goes to Keycloak; the app never sees it</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Only if the user checks "remember me"</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Exactly. The signature is the seal. Any edit to the claims breaks it, so the service rejects the token — you can read a JWT, but you can't tamper with it."
+               data-explanation-wrong="Remember the three parts. Which one is Keycloak's tamper-proof seal, and what happens to it if the claims change?">
+            <h3 class="quiz-question">Someone decodes their token, changes <code>org_id</code> to another company's id, and sends it back. What happens?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>It works — claims are just text you can edit</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>It works until the token expires</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>It's rejected — editing the claims breaks Keycloak's signature</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module3')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module3')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-4" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">04</span>
+      <h1 class="module-title">Crossing the gateway</h1>
+      <p class="module-subtitle">Your browser holds a badge stamped "front door." But the inner services won't accept it. Here's the border crossing — and the badge-swap office that makes it work.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">One badge can't open every door</h2>
+        <p>Remember the <code>aud</code> (audience) claim from the last module? A badge stamped <code>vs-platform-gateway</code> is accepted <em>only</em> by the gateway. The business API rejects it on sight, because its name isn't on the stamp.</p>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🎫</div>
+          <div class="callout-content">
+            <strong class="callout-title">The cloakroom-ticket rule</strong>
+            <p>A coat-check ticket only works at the cloakroom that issued it. You can't wave it at the bar and expect a drink. Each VS Platform service is its own cloakroom — it only honours tickets stamped with its own name.</p>
+          </div>
+        </div>
+
+        <p>So how does a request actually reach the API? The <span class="term" data-definition="A gateway (here built with a reverse proxy called YARP) is the single entry point that all outside requests pass through. It inspects each request and forwards the allowed ones to the right inner service.">gateway</span> does three jobs, in order, for every single request.</p>
+
+        <div class="step-cards stagger-children">
+          <div class="step-card animate-in">
+            <div class="step-num">1</div>
+            <div class="step-body"><strong>Validate the badge</strong><p>Is it genuinely signed by Keycloak, unexpired, and stamped for the gateway?</p></div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">2</div>
+            <div class="step-body"><strong>Check one permission</strong><p>Does this user hold <code>gateway.access</code> — the basic "allowed through the front door" right?</p></div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">3</div>
+            <div class="step-body"><strong>Swap the badge, then forward</strong><p>Trade the badge for one stamped for the target service, strip the original, and pass the request inward.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Listen in on the border crossing</h2>
+        <p>Here's the conversation between the four characters when you ask for the employee list. Play it message by message:</p>
+
+        <div class="chat-window" id="chat-module4">
+          <div class="chat-messages">
+            <div class="chat-message" data-msg="0" data-sender="browser" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-2)">🖥️</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-2)">Browser</span>
+                <p>Here's my front-door badge. Please fetch <code>/api/employees</code> for me.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="1" data-sender="gateway" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">🛂</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">Gateway</span>
+                <p>Badge is genuine and you hold <code>gateway.access</code>. But it's stamped for me, not the API. I can't just forward it.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="2" data-sender="gateway" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">🛂</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">Gateway → STS</span>
+                <p>Here's my caller key. Please swap this user's badge for one stamped <code>vs-platform-api</code>.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="3" data-sender="sts" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-4)">🔁</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-4)">STS</span>
+                <p>Caller key checks out, and you're allowed to request that audience. Exchanging with Keycloak… here's the API-stamped badge. (I cached it, so next time is instant.)</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="4" data-sender="gateway" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-3)">🛂</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-3)">Gateway → API</span>
+                <p>Forwarding the request with the new badge. I've removed the original front-door badge entirely.</p>
+              </div>
+            </div>
+            <div class="chat-message" data-msg="5" data-sender="api" style="display:none">
+              <div class="chat-avatar" style="background: var(--color-actor-1)">⚙️</div>
+              <div class="chat-bubble">
+                <span class="chat-sender" style="color: var(--color-actor-1)">Business API</span>
+                <p>Audience says <code>vs-platform-api</code> — that's me. Badge accepted. Now, do they have permission to read employees? (See you in Module 5.)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-typing" id="chat-typing" style="display:none">
+            <div class="chat-avatar" id="typing-avatar">?</div>
+            <div class="chat-typing-dots">
+              <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+            </div>
+          </div>
+
+          <div class="chat-controls">
+            <button class="btn chat-next-btn">Next Message</button>
+            <button class="btn chat-all-btn">Play All</button>
+            <button class="btn chat-reset-btn">Replay</button>
+            <span class="chat-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Why bother with a separate exchange office?</h2>
+        <p>The badge-swap is done by the <span class="term" data-definition="The STS (Security Token Service) is the only service trusted with Keycloak's powerful exchange secrets. Other services ask it to swap tokens, so those secrets live in exactly one small, well-guarded place.">STS</span>, not the gateway itself. That's deliberate: the dangerous secrets needed to mint new badges live in <em>one</em> tiny service, so a bug anywhere else can't leak them.</p>
+
+        <div class="badge-list animate-in">
+          <div class="badge-item">
+            <code class="badge-code">RFC 8693</code>
+            <span class="badge-desc">The official standard for "trade this token for a different one." Not a homegrown trick.</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">caller key</code>
+            <span class="badge-desc">A shared secret the gateway shows the STS to prove it's an allowed caller — not just anyone can request a swap.</span>
+          </div>
+          <div class="badge-item">
+            <code class="badge-code">Redis cache</code>
+            <span class="badge-desc">Swapped badges are remembered briefly, so repeat requests skip the round-trip to Keycloak.</span>
+          </div>
+        </div>
+
+        <p>And critically — the gateway <strong>throws away</strong> the browser's original badge before forwarding. The inner service only ever sees the freshly-stamped one. Here's that exact moment in the gateway code:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line">transformContext.<span class="code-function">AddRequestTransform</span>(requestContext =&gt;</span>
+<span class="code-line">{</span>
+<span class="code-line">  requestContext.ProxyRequest.Headers.Authorization = <span class="code-keyword">null</span>;</span>
+<span class="code-line"></span>
+<span class="code-line">  <span class="code-keyword">if</span> (requestContext.HttpContext.Items[ExchangedTokenItemKey] <span class="code-keyword">is string</span> accessToken)</span>
+<span class="code-line">  {</span>
+<span class="code-line">    requestContext.ProxyRequest.Headers.Authorization =</span>
+<span class="code-line">      <span class="code-keyword">new</span> <span class="code-function">AuthenticationHeaderValue</span>(<span class="code-string">"Bearer"</span>, accessToken);</span>
+<span class="code-line">  }</span>
+<span class="code-line">});</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Just before forwarding the request inward…</p>
+              <p class="tl">…first, rip off the original front-door badge completely.</p>
+              <p class="tl">Then, if the badge-swap produced a new API-stamped badge…</p>
+              <p class="tl">…attach <em>that</em> one instead.</p>
+              <p class="tl">Net effect: the inner service never sees the browser's original badge — only the one meant for it.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Quick check</h2>
+        <div class="quiz-container" id="quiz-module4">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Right. The badge is stamped for the gateway's audience. The API only accepts badges stamped with its own name, so the gateway must obtain a freshly-stamped one via the STS."
+               data-explanation-wrong="Think about the audience claim. Whose name is stamped on the badge the browser holds, and which service is being asked to accept it?">
+            <h3 class="quiz-question">Why can't the gateway simply pass the browser's badge straight through to the API unchanged?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>The badge is too big to forward</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>That badge's audience is the gateway, not the API — the API would reject it</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>The API doesn't use badges at all</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Exactly. Concentrating the exchange secrets in one small, heavily-guarded service means a vulnerability in the gateway, API, or authz service can't leak the keys to mint tokens."
+               data-explanation-wrong="Consider what the STS uniquely holds, and what would happen if those secrets were copied into every service.">
+            <h3 class="quiz-question">You're designing a similar system. What's the security argument for one STS instead of letting each service swap its own tokens?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>The most dangerous secrets stay in one small, guarded place instead of being copied everywhere</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>It makes the tokens shorter</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>It removes the need for Keycloak</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module4')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module4')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-5" style="background: var(--color-bg-warm)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">05</span>
+      <h1 class="module-title">Who-can-do-what</h1>
+      <p class="module-subtitle">The badge got you in the building. Now every door has its own keycard reader. This is authorization — and it's where multiple organizations, a records office, and a locksmith all come in.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Every endpoint guards itself</h2>
+        <p>Inside the business API, individual actions are protected one at a time. Reading the employee list requires the <code>employees.read</code> <span class="term" data-definition="A permission is a named right to do one specific thing, like 'employees.read'. Users are granted permissions, and each action checks for the one it needs. This style is called role-based access control (RBAC).">permission</span>. The check is a single line above the method:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-attr">[HttpGet]</span></span>
+<span class="code-line"><span class="code-attr">[RequireVsPermission(ApiPermissions.EmployeesRead)]</span></span>
+<span class="code-line"><span class="code-keyword">public async</span> Task&lt;ActionResult&gt; <span class="code-function">GetAll</span>()</span>
+<span class="code-line">{</span>
+<span class="code-line">  <span class="code-keyword">var</span> items = <span class="code-keyword">await</span> dbContext.Employees…<span class="code-function">ToListAsync</span>();</span>
+<span class="code-line">  <span class="code-keyword">return</span> <span class="code-function">Ok</span>(items);</span>
+<span class="code-line">}</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">This method answers web requests for the employee list…</p>
+              <p class="tl">…but first, the caller must hold the <code>employees.read</code> permission. No permission, no entry.</p>
+              <p class="tl">Only if that passes does the method actually run.</p>
+              <p class="tl">Fetch the employees from the database…</p>
+              <p class="tl">…and send them back.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🚪</div>
+          <div class="callout-content">
+            <strong class="callout-title">Keycards, not a single master key</strong>
+            <p>Being inside the building (authenticated) is not the same as being allowed into the payroll room. Each door has its own reader checking for one specific permission. Engineers call this <span class="term" data-definition="Least privilege means giving each user exactly the rights they need and nothing more. It limits the blast radius if an account is ever misused or compromised.">least privilege</span>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The verdict is returned, never thrown</h2>
+        <p>Behind that one-line check is a decision engine shared by every service (from the common rulebook library). It returns a verdict object explaining <em>exactly</em> why access was allowed or denied — which is gold when you're debugging.</p>
+
+        <p>These are the real reasons it can say "no":</p>
+
+        <div class="badge-list animate-in stagger-children">
+          <div class="badge-item animate-in"><code class="badge-code">Unauthenticated</code><span class="badge-desc">No valid badge: missing, unreadable, or expired. → becomes a <strong>401</strong>.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">MissingPermission</code><span class="badge-desc">Valid badge, but the needed permission isn't granted. → becomes a <strong>403</strong>.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">OrganizationMismatch</code><span class="badge-desc">The badge's org doesn't match the org in the request. → <strong>403</strong>.</span></div>
+          <div class="badge-item animate-in"><code class="badge-code">StaleAuthorization</code><span class="badge-desc">Permissions changed after the badge was issued — it's out of date.</span></div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">🔎</div>
+          <div class="callout-content">
+            <strong class="callout-title">Why this is a debugging superpower</strong>
+            <p>When a request fails, the system doesn't just say "denied." It names the reason. So instead of guessing, you can tell an AI assistant precisely: "the API returns <code>OrganizationMismatch</code> — the request org and the token org disagree." That's a fixable bug report, not a mystery.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">One person, many organizations</h2>
+        <p>A single user can belong to several <span class="term" data-definition="An organization (org) is a tenant — a separate customer or company whose data is walled off from others. One login can have access to several orgs, but acts inside only one at a time.">organizations</span>. But a badge carries exactly <strong>one</strong> <code>org_id</code> at a time — you act inside one org, then switch. Here's the choreography:</p>
+
+        <div class="step-cards stagger-children">
+          <div class="step-card animate-in">
+            <div class="step-num">1</div>
+            <div class="step-body"><strong>Ask "which orgs am I in?"</strong><p>After login the app calls the authz service's <code>/orgs/mine</code>, which reads the records office.</p></div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">2</div>
+            <div class="step-body"><strong>You pick one</strong><p>If you're in more than one, a picker appears. You choose, say, "Northeast Division."</p></div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">3</div>
+            <div class="step-body"><strong>Get a fresh badge for that org</strong><p>The token is re-swapped with a <code>vs-context</code> scope, stamping a single <code>org_id</code> into it.</p></div>
+          </div>
+          <div class="step-card animate-in">
+            <div class="step-num">4</div>
+            <div class="step-body"><strong>Every request now carries that org</strong><p>The API checks the request's org matches the badge's org — that's the <code>OrganizationMismatch</code> guard from the last screen.</p></div>
+          </div>
+        </div>
+
+        <p>The list of organizations comes from the authz service, which guards it with its own permission:</p>
+
+        <div class="translation-block animate-in">
+          <div class="translation-code">
+            <span class="translation-label">CODE</span>
+            <pre><code><span class="code-line"><span class="code-attr">[HttpGet("mine")]</span></span>
+<span class="code-line"><span class="code-attr">[RequireVsPermission(AuthzPermissions.OrgsRead)]</span></span>
+<span class="code-line"><span class="code-keyword">public async</span> Task&lt;ActionResult&lt;IReadOnlyList&lt;OrgSummaryDto&gt;&gt;&gt; <span class="code-function">GetMine</span>(…)</span></code></pre>
+          </div>
+          <div class="translation-english">
+            <span class="translation-label">PLAIN ENGLISH</span>
+            <div class="translation-lines">
+              <p class="tl">Answer the question "which orgs do I belong to?"…</p>
+              <p class="tl">…but only for callers holding <code>authz.orgs.read</code>.</p>
+              <p class="tl">Return the list of organizations this user can act inside.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The records office and the locksmith</h2>
+        <p>Where do permissions actually <em>live</em>? Two places, kept in sync — and understanding this split explains a whole class of "why can't I do this?" bugs.</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)">
+            <div class="pattern-icon" style="background: var(--color-actor-5)">🗂️</div>
+            <h4 class="pattern-title">The records office (Postgres)</h4>
+            <p class="pattern-desc">The authz service's database is the <em>source of truth</em>: who is in which org, and exactly what they may do. Change it here and it's official.</p>
+          </div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)">
+            <div class="pattern-icon" style="background: var(--color-actor-4)">🔧</div>
+            <h4 class="pattern-title">The locksmith (reconciler)</h4>
+            <p class="pattern-desc">A job called the <span class="term" data-definition="The reconciler is a background job that copies the official grants from the Postgres records office into Keycloak, so the rights end up baked into newly-issued badges.">reconciler</span> copies those official grants into Keycloak, so they get baked into future badges.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-warning">
+          <div class="callout-icon">⏳</div>
+          <div class="callout-content">
+            <strong class="callout-title">The "I was granted access but it doesn't work yet" trap</strong>
+            <p>If someone is given a new permission in the records office but the locksmith hasn't reprogrammed Keycloak — or the user is still carrying an old badge — their access won't take effect until a fresh badge is issued. That gap is the <code>StaleAuthorization</code> reason in disguise.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Quick check</h2>
+        <div class="quiz-container" id="quiz-module5">
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Right. A 401 means 'we don't know who you are' (bad/expired badge); a 403 means 'we know exactly who you are, but you lack this permission.' Two very different fixes."
+               data-explanation-wrong="One of these codes is about identity being unproven; the other is about a known user lacking a specific right. Which is which?">
+            <h3 class="quiz-question">A user gets a <strong>403</strong> on the payroll page but a <strong>401</strong> on a different page. What's the difference?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>They're the same error with different numbers</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>403 means the server is down; 401 means slow network</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>401 = identity not proven (bad badge); 403 = known user, missing permission</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Exactly. The grant is official in Postgres, but the user's current badge was minted before that change. They need a fresh badge (and the reconciler must have projected the grant into Keycloak) for it to take effect."
+               data-explanation-wrong="Think about the records office vs. the badge in the user's hand. Where was the permission added, and what is the user still carrying?">
+            <h3 class="quiz-question">You add a permission for a user in the authz records office, but they still get denied. Most likely cause?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Permissions don't exist in this system</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>They're still holding an old badge issued before the change — they need a fresh one</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>You must restart the whole platform after any change</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-a"
+               data-explanation-right="Correct. The badge carries exactly one org_id. If the request targets a different org than the badge was stamped for, the API returns OrganizationMismatch — that's the tenant wall doing its job."
+               data-explanation-wrong="Recall that a badge holds a single org_id. What does the API do when the request's org and the badge's org disagree?">
+            <h3 class="quiz-question">A user in two orgs is acting inside Org A, but a request targets Org B's data. What stops them?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>The badge's org_id won't match the request — the API returns OrganizationMismatch</span>
+              </button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>Nothing — any logged-in user sees every org</span>
+              </button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)">
+                <div class="quiz-option-radio"></div><span>The browser blocks it</span>
+              </button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module5')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module5')">Try Again</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+<section class="module" id="module-6" style="background: var(--color-bg)">
+  <div class="module-content">
+    <header class="module-header animate-in">
+      <span class="module-number">06</span>
+      <h1 class="module-title">When it breaks — and the big picture</h1>
+      <p class="module-subtitle">You've met every actor. Now watch one click travel the entire system end to end, then build the instinct to debug it when something goes wrong.</p>
+    </header>
+
+    <div class="module-body">
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">The whole journey, one click</h2>
+        <p>Everything from the last five modules, in a single trip. Step through it — by the end this should feel familiar, not mysterious:</p>
+
+        <div class="flow-animation" data-steps='[
+          {"highlight":"flow-actor-1","label":"You click Sign In in the browser."},
+          {"highlight":"flow-actor-2","label":"Browser logs you in at Keycloak using the safe PKCE flow.","packet":true,"from":"actor-1","to":"actor-2"},
+          {"highlight":"flow-actor-1","label":"Keycloak returns a signed badge stamped for the front door.","packet":true,"from":"actor-2","to":"actor-1"},
+          {"highlight":"flow-actor-3","label":"Browser calls the gateway, carrying that badge.","packet":true,"from":"actor-1","to":"actor-3"},
+          {"highlight":"flow-actor-3","label":"Gateway checks the badge is genuine and that you hold gateway.access."},
+          {"highlight":"flow-actor-4","label":"Gateway asks the STS to swap the badge for an API-stamped one.","packet":true,"from":"actor-3","to":"actor-4"},
+          {"highlight":"flow-actor-3","label":"STS returns the new badge (and caches it for next time).","packet":true,"from":"actor-4","to":"actor-3"},
+          {"highlight":"flow-actor-5","label":"Gateway strips the old badge and forwards the request to the API.","packet":true,"from":"actor-3","to":"actor-5"},
+          {"highlight":"flow-actor-5","label":"API checks the badge audience and your permission, then runs the query."},
+          {"highlight":"flow-actor-1","label":"Data travels all the way back. You see the page.","packet":true,"from":"actor-5","to":"actor-1"}
+        ]'>
+          <div class="flow-actors">
+            <div class="flow-actor" id="flow-actor-1"><div class="flow-actor-icon">🖥️</div><span>Browser</span></div>
+            <div class="flow-actor" id="flow-actor-2"><div class="flow-actor-icon">🪪</div><span>Keycloak</span></div>
+            <div class="flow-actor" id="flow-actor-3"><div class="flow-actor-icon">🛂</div><span>Gateway</span></div>
+            <div class="flow-actor" id="flow-actor-4"><div class="flow-actor-icon">🔁</div><span>STS</span></div>
+            <div class="flow-actor" id="flow-actor-5"><div class="flow-actor-icon">⚙️</div><span>API</span></div>
+          </div>
+          <div class="flow-packet" id="flow-packet"></div>
+          <div class="flow-step-label" id="flow-label">Click "Next Step" to begin</div>
+          <div class="flow-controls">
+            <button class="btn flow-next-btn">Next Step</button>
+            <button class="btn flow-reset-btn">Restart</button>
+            <span class="flow-progress"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">A debugging field guide</h2>
+        <p>When something fails, the symptom usually points straight at one stage of that journey. Here's where to look first:</p>
+
+        <div class="icon-rows stagger-children">
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-error)">401</div>
+            <div><strong>"Unauthorized" everywhere</strong><p>The badge is missing, expired, or unreadable. Look at login and token expiry — identity itself isn't being proven.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-accent)">403</div>
+            <div><strong>Logged in, but one action is denied</strong><p>Identity is fine; a permission is missing. Check the grant in the authz records office and whether a fresh badge was issued.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-3)">🎯</div>
+            <div><strong>Works at the gateway, fails inside</strong><p>An audience mismatch — a service received a badge stamped for someone else. Check the token swap and each service's expected audience.</p></div>
+          </div>
+          <div class="icon-row animate-in">
+            <div class="icon-circle" style="background: var(--color-actor-5)">🏢</div>
+            <div><strong>"OrganizationMismatch"</strong><p>The request targets a different org than the badge carries. The user likely needs to switch orgs (re-pick) to get a badge for the right one.</p></div>
+          </div>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🧠</div>
+          <div class="callout-content">
+            <strong class="callout-title">The instinct to build</strong>
+            <p>Don't ask "is auth broken?" Ask "<em>which stage</em> of the journey broke?" Login, badge validation, the swap, the permission check, or the org match. Naming the stage turns a vague panic into a one-line bug report an AI can act on.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Spot the bug</h2>
+        <p>Here's a snippet of the <strong>business API's</strong> configuration. One line will make every request fail <em>after</em> it passes the gateway. Click the line you think is wrong:</p>
+
+        <div class="bug-challenge">
+          <div class="bug-code">
+            <div class="bug-line" data-line="1" onclick="checkBugLine(this, false)">
+              <span class="line-num">1</span><code>"VSPlatformAuth": {</code>
+            </div>
+            <div class="bug-line" data-line="2" onclick="checkBugLine(this, false)">
+              <span class="line-num">2</span><code>  "Authority": "http://localhost:8080/realms/vs-platform",</code>
+            </div>
+            <div class="bug-line bug-target" data-line="3" onclick="checkBugLine(this, true)">
+              <span class="line-num">3</span><code>  "Audience": "vs-platform-gateway",</code>
+            </div>
+            <div class="bug-line" data-line="4" onclick="checkBugLine(this, false)">
+              <span class="line-num">4</span><code>  "Sts": { "CallerId": "vs-platform-api" }</code>
+            </div>
+            <div class="bug-line" data-line="5" onclick="checkBugLine(this, false)">
+              <span class="line-num">5</span><code>}</code>
+            </div>
+          </div>
+          <div class="bug-feedback" id="bug-feedback"></div>
+        </div>
+
+        <div class="callout callout-info">
+          <div class="callout-icon">💬</div>
+          <div class="callout-content">
+            <strong class="callout-title">The fix in plain words</strong>
+            <p>The business API must expect badges stamped <code>vs-platform-api</code> — its own name — not <code>vs-platform-gateway</code>. With the wrong audience, the gateway's freshly-swapped badge gets rejected, and every inner request fails with a 401 even though login worked perfectly.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">You can now read the whole system</h2>
+        <p>Six ideas, and you have the complete map:</p>
+
+        <div class="pattern-cards stagger-children">
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)"><div class="pattern-icon" style="background: var(--color-actor-1)">🪪</div><h4 class="pattern-title">Identity is separate</h4><p class="pattern-desc">Keycloak alone handles passwords and issues signed badges.</p></div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-2)"><div class="pattern-icon" style="background: var(--color-actor-2)">🎫</div><h4 class="pattern-title">Badges are stamped</h4><p class="pattern-desc">The audience claim means a badge only opens the door it was made for.</p></div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-3)"><div class="pattern-icon" style="background: var(--color-actor-3)">🛂</div><h4 class="pattern-title">One front door</h4><p class="pattern-desc">The gateway validates, then swaps badges via the STS before forwarding.</p></div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-4)"><div class="pattern-icon" style="background: var(--color-actor-4)">🔁</div><h4 class="pattern-title">Secrets stay isolated</h4><p class="pattern-desc">Only the STS can mint badges, so the crown jewels live in one place.</p></div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-5)"><div class="pattern-icon" style="background: var(--color-actor-5)">🗂️</div><h4 class="pattern-title">Permissions per door</h4><p class="pattern-desc">Each action checks one permission; orgs wall tenants apart.</p></div>
+          <div class="pattern-card animate-in" style="border-top: 3px solid var(--color-actor-1)"><div class="pattern-icon" style="background: var(--color-actor-1)">🔧</div><h4 class="pattern-title">Records, then locksmith</h4><p class="pattern-desc">Postgres is the truth; the reconciler bakes it into future badges.</p></div>
+        </div>
+      </section>
+
+      <section class="screen animate-in">
+        <h2 class="screen-heading">Final check</h2>
+        <div class="quiz-container" id="quiz-module6">
+          <div class="quiz-question-block"
+               data-correct="opt-b"
+               data-explanation-right="Right. Login succeeded (you got a badge), so it's not identity. The failure is inside, after the gateway — most likely a permission missing (403) or an audience/config mismatch. Start at the API's checks, not at login."
+               data-explanation-wrong="If the user logged in successfully, identity is already proven. Which stages come after login in the journey?">
+            <h3 class="quiz-question">A user logs in fine, the dashboard loads, but one specific report returns an error. Where do you look <em>first</em>?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The login / Keycloak — identity must be broken</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The API's permission check for that report (and its audience config)</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>The user's internet connection</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <div class="quiz-question-block"
+               data-correct="opt-c"
+               data-explanation-right="Exactly. Because the gateway is the only way in and it always re-stamps the badge per target service, an inner service can trust that any request reaching it was validated and correctly addressed. That's the whole point of the single front door."
+               data-explanation-wrong="Think about what it means that the gateway is the only entrance and always swaps the badge before forwarding.">
+            <h3 class="quiz-question">Why can each inner service stay relatively simple about security?</h3>
+            <div class="quiz-options">
+              <button class="quiz-option" data-value="opt-a" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Because security doesn't matter inside the network</span></button>
+              <button class="quiz-option" data-value="opt-b" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Because Keycloak re-checks every inner request</span></button>
+              <button class="quiz-option" data-value="opt-c" onclick="selectOption(this)"><div class="quiz-option-radio"></div><span>Because every request must pass the single gateway, which validates and re-stamps the badge first</span></button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <button class="quiz-check-btn" onclick="checkQuiz('quiz-module6')">Check Answers</button>
+          <button class="quiz-reset-btn" onclick="resetQuiz('quiz-module6')">Try Again</button>
+        </div>
+
+        <div class="callout callout-accent">
+          <div class="callout-icon">🎓</div>
+          <div class="callout-content">
+            <strong class="callout-title">That's the platform's auth, end to end</strong>
+            <p>You can now trace a login from the click to the data and back, name every actor, and pinpoint where a failure lives. That's exactly the fluency you need to steer an AI assistant through this codebase with confidence.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+  </main>
+
+  <script>
+/**
+ * CODEBASE-TO-COURSE — COMPLETE JS ENGINE
+ * Copy this file verbatim into the course output directory.
+ * Never regenerate it. It handles all interactivity generically.
+ *
+ * Engines included:
+ *  - Navigation & progress bar
+ *  - Scroll-triggered reveal animations
+ *  - Keyboard navigation
+ *  - Glossary tooltips
+ *  - Quiz (multiple-choice & scenario)
+ *  - Drag-and-drop matching
+ *  - Group chat animation
+ *  - Data flow / message flow animation
+ *  - Architecture diagram
+ *  - "Spot the bug" challenge
+ *  - Layer toggle
+ */
+(function () {
+  'use strict';
+
+  /* ── HELPERS ──────────────────────────────────────────────── */
+  function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+  function $$(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
+
+  /* ── NAVIGATION & PROGRESS BAR ────────────────────────────── */
+  const progressBar = $('#progress-bar');
+  const navDots     = $$('.nav-dot');
+  const modules     = $$('.module');
+
+  function updateProgress() {
+    if (!progressBar) return;
+    const scrollTop    = window.scrollY;
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct          = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    progressBar.style.width = pct + '%';
+    progressBar.setAttribute('aria-valuenow', Math.round(pct));
+    updateNavDots();
+  }
+
+  function updateNavDots() {
+    const scrollMid = window.scrollY + window.innerHeight / 2;
+    modules.forEach((mod, i) => {
+      const dot = navDots[i];
+      if (!dot) return;
+      const top    = mod.offsetTop;
+      const bottom = top + mod.offsetHeight;
+      if (scrollMid >= top && scrollMid < bottom) {
+        dot.classList.add('active');
+        dot.classList.remove('visited');
+      } else if (window.scrollY + window.innerHeight > top) {
+        dot.classList.remove('active');
+        dot.classList.add('visited');
+      } else {
+        dot.classList.remove('active', 'visited');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', () => requestAnimationFrame(updateProgress), { passive: true });
+  updateProgress();
+
+  // Nav dot click → scroll to module
+  navDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const target = $('#' + dot.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  /* ── KEYBOARD NAVIGATION ───────────────────────────────────── */
+  function currentModuleIndex() {
+    const scrollMid = window.scrollY + window.innerHeight / 2;
+    for (let i = 0; i < modules.length; i++) {
+      const top    = modules[i].offsetTop;
+      const bottom = top + modules[i].offsetHeight;
+      if (scrollMid >= top && scrollMid < bottom) return i;
+    }
+    return 0;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      const next = modules[currentModuleIndex() + 1];
+      if (next) { next.scrollIntoView({ behavior: 'smooth' }); e.preventDefault(); }
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      const prev = modules[currentModuleIndex() - 1];
+      if (prev) { prev.scrollIntoView({ behavior: 'smooth' }); e.preventDefault(); }
+    }
+  });
+
+  /* ── SCROLL-TRIGGERED REVEAL ───────────────────────────────── */
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+  $$('.animate-in').forEach(el => revealObserver.observe(el));
+
+  // Stagger children
+  $$('.stagger-children').forEach(parent => {
+    Array.from(parent.children).forEach((child, i) => {
+      child.style.setProperty('--stagger-index', i);
+    });
+  });
+
+  /* ── GLOSSARY TOOLTIPS ─────────────────────────────────────── */
+  let activeTooltip = null;
+
+  function positionTooltip(term, tip) {
+    const rect     = term.getBoundingClientRect();
+    const tipWidth = Math.min(320, Math.max(200, window.innerWidth * 0.8));
+    let left = rect.left + rect.width / 2 - tipWidth / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - tipWidth - 8));
+    tip.style.left  = left + 'px';
+    tip.style.width = tipWidth + 'px';
+    document.body.appendChild(tip);
+    const tipHeight = tip.offsetHeight;
+    if (rect.top - tipHeight - 12 < 0) {
+      tip.style.top = (rect.bottom + 8) + 'px';
+      tip.classList.add('flip');
+    } else {
+      tip.style.top = (rect.top - tipHeight - 8) + 'px';
+      tip.classList.remove('flip');
+    }
+  }
+
+  function showTooltip(term, tip) {
+    if (activeTooltip && activeTooltip !== tip) {
+      activeTooltip.classList.remove('visible');
+      activeTooltip.remove();
+    }
+    positionTooltip(term, tip);
+    requestAnimationFrame(() => tip.classList.add('visible'));
+    activeTooltip = tip;
+  }
+
+  function hideTooltip(tip) {
+    tip.classList.remove('visible');
+    setTimeout(() => { if (!tip.classList.contains('visible')) tip.remove(); }, 150);
+    if (activeTooltip === tip) activeTooltip = null;
+  }
+
+  $$('.term').forEach(term => {
+    const tip = document.createElement('span');
+    tip.className = 'term-tooltip';
+    tip.textContent = term.dataset.definition;
+
+    term.addEventListener('mouseenter', () => showTooltip(term, tip));
+    term.addEventListener('mouseleave', () => hideTooltip(tip));
+    term.addEventListener('click', e => {
+      e.stopPropagation();
+      tip.classList.contains('visible') ? hideTooltip(tip) : showTooltip(term, tip);
+    });
+  });
+
+  document.addEventListener('click', () => {
+    if (activeTooltip) { activeTooltip.classList.remove('visible'); activeTooltip.remove(); activeTooltip = null; }
+  });
+
+  /* ── QUIZ ENGINE ───────────────────────────────────────────── */
+  window.selectOption = function (btn) {
+    const block = btn.closest('.quiz-question-block');
+    $$('.quiz-option', block).forEach(o => o.classList.remove('selected'));
+    btn.classList.add('selected');
+  };
+
+  window.checkQuiz = function (containerId) {
+    const container = $('#' + containerId);
+    if (!container) return;
+    $$('.quiz-question-block', container).forEach(q => {
+      const selected  = $('.quiz-option.selected', q);
+      const feedback  = $('.quiz-feedback', q);
+      const correct   = q.dataset.correct;
+      const rightExp  = q.dataset.explanationRight  || '';
+      const wrongExp  = q.dataset.explanationWrong  || '';
+
+      if (!selected) {
+        feedback.textContent = 'Pick an answer first!';
+        feedback.className = 'quiz-feedback show warning';
+        return;
+      }
+      $$('.quiz-option', q).forEach(o => o.disabled = true);
+
+      if (selected.dataset.value === correct) {
+        selected.classList.add('correct');
+        feedback.innerHTML = '<strong>Exactly!</strong> ' + rightExp;
+        feedback.className = 'quiz-feedback show success';
+      } else {
+        selected.classList.add('incorrect');
+        const correctBtn = $(`.quiz-option[data-value="${correct}"]`, q);
+        if (correctBtn) correctBtn.classList.add('correct');
+        feedback.innerHTML = '<strong>Not quite.</strong> ' + wrongExp;
+        feedback.className = 'quiz-feedback show error';
+      }
+    });
+  };
+
+  window.resetQuiz = function (containerId) {
+    const container = $('#' + containerId);
+    if (!container) return;
+    $$('.quiz-option', container).forEach(o => {
+      o.classList.remove('selected', 'correct', 'incorrect');
+      o.disabled = false;
+    });
+    $$('.quiz-feedback', container).forEach(f => { f.className = 'quiz-feedback'; f.textContent = ''; });
+  };
+
+  /* ── DRAG-AND-DROP ENGINE ──────────────────────────────────── */
+  function initDnD(containerEl) {
+    if (!containerEl) return;
+    const chips = $$('.dnd-chip', containerEl);
+    const zones = $$('.dnd-zone', containerEl);
+
+    // Mouse (HTML5 Drag API)
+    chips.forEach(chip => {
+      chip.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', chip.dataset.answer);
+        chip.classList.add('dragging');
+      });
+      chip.addEventListener('dragend', () => chip.classList.remove('dragging'));
+    });
+
+    zones.forEach(zone => {
+      const target = $('.dnd-zone-target', zone);
+      if (!target) return;
+      target.addEventListener('dragover',  e => { e.preventDefault(); target.classList.add('drag-over'); });
+      target.addEventListener('dragleave', ()  => target.classList.remove('drag-over'));
+      target.addEventListener('drop', e => {
+        e.preventDefault();
+        target.classList.remove('drag-over');
+        const answer = e.dataTransfer.getData('text/plain');
+        const chip   = $(`.dnd-chip[data-answer="${answer}"]`, containerEl);
+        if (!chip) return;
+        target.textContent    = chip.textContent;
+        target.dataset.placed = answer;
+        chip.classList.add('placed');
+      });
+    });
+
+    // Touch
+    chips.forEach(chip => {
+      chip.addEventListener('touchstart', e => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const ghost = chip.cloneNode(true);
+        ghost.classList.add('touch-ghost');
+        ghost.style.cssText = `position:fixed;z-index:9999;pointer-events:none;left:${touch.clientX - 40}px;top:${touch.clientY - 20}px;`;
+        document.body.appendChild(ghost);
+        chip._ghost  = ghost;
+        chip._answer = chip.dataset.answer;
+      }, { passive: false });
+
+      chip.addEventListener('touchmove', e => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        if (chip._ghost) {
+          chip._ghost.style.left = (touch.clientX - 40) + 'px';
+          chip._ghost.style.top  = (touch.clientY - 20) + 'px';
+        }
+        zones.forEach(z => { const t = $('.dnd-zone-target', z); if (t) t.classList.remove('drag-over'); });
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        const zt = el && el.closest('.dnd-zone-target');
+        if (zt) zt.classList.add('drag-over');
+      }, { passive: false });
+
+      chip.addEventListener('touchend', e => {
+        if (chip._ghost) { chip._ghost.remove(); chip._ghost = null; }
+        const touch = e.changedTouches[0];
+        const el    = document.elementFromPoint(touch.clientX, touch.clientY);
+        const zt    = el && el.closest('.dnd-zone-target');
+        if (zt) {
+          zt.textContent    = chip.textContent;
+          zt.dataset.placed = chip._answer;
+          chip.classList.add('placed');
+        }
+        zones.forEach(z => { const t = $('.dnd-zone-target', z); if (t) t.classList.remove('drag-over'); });
+      });
+    });
+  }
+
+  window.checkDnD = function (containerId) {
+    const container = $('#' + containerId);
+    if (!container) return;
+    $$('.dnd-zone', container).forEach(zone => {
+      const target  = $('.dnd-zone-target', zone);
+      if (!target || !target.dataset.placed) return;
+      if (target.dataset.placed === zone.dataset.correct) {
+        target.classList.add('correct-placed');
+      } else {
+        target.classList.add('incorrect-placed');
+      }
+    });
+  };
+
+  window.resetDnD = function (containerId) {
+    const container = $('#' + containerId);
+    if (!container) return;
+    $$('.dnd-zone-target', container).forEach(t => {
+      t.textContent = 'Drop here';
+      delete t.dataset.placed;
+      t.classList.remove('correct-placed', 'incorrect-placed');
+    });
+    $$('.dnd-chip', container).forEach(c => c.classList.remove('placed', 'dragging'));
+  };
+
+  // Auto-init all dnd containers
+  $$('.dnd-container').forEach(el => initDnD(el));
+
+  /* ── GROUP CHAT ENGINE ─────────────────────────────────────── */
+  function initChat(containerEl) {
+    if (!containerEl) return;
+    const messages    = $$('.chat-message', containerEl);
+    const typingEl    = $('.chat-typing', containerEl);
+    const typingAvEl  = $('#' + containerEl.id + '-typing-avatar') || $('.chat-avatar', typingEl);
+    const progressEl  = $('.chat-progress', containerEl);
+    let index = 0;
+
+    // Build actor map from messages
+    const actors = {};
+    messages.forEach(msg => {
+      const sender = msg.dataset.sender;
+      const avatar = $('.chat-avatar', msg);
+      if (avatar && !actors[sender]) {
+        actors[sender] = { initial: avatar.textContent.trim(), style: avatar.style.background };
+      }
+    });
+
+    function updateProgress() {
+      if (progressEl) progressEl.textContent = index + ' / ' + messages.length + ' messages';
+    }
+
+    function showNext() {
+      if (index >= messages.length) return;
+      const msg    = messages[index];
+      const sender = msg.dataset.sender;
+
+      if (typingEl && actors[sender]) {
+        if (typingAvEl) {
+          typingAvEl.textContent       = actors[sender].initial;
+          typingAvEl.style.background  = actors[sender].style;
+        }
+        typingEl.style.display = 'flex';
+      }
+
+      setTimeout(() => {
+        if (typingEl) typingEl.style.display = 'none';
+        msg.style.display = 'flex';
+        msg.style.animation = 'fadeSlideUp 0.3s var(--ease-out)';
+        index++;
+        updateProgress();
+      }, 800);
+    }
+
+    function showAll() {
+      const iv = setInterval(() => {
+        if (index >= messages.length) { clearInterval(iv); return; }
+        showNext();
+      }, 1200);
+    }
+
+    function reset() {
+      index = 0;
+      messages.forEach(m => { m.style.display = 'none'; m.style.animation = ''; });
+      if (typingEl) typingEl.style.display = 'none';
+      updateProgress();
+    }
+
+    // Bind controls
+    const nextBtn  = $('.chat-next-btn',  containerEl);
+    const allBtn   = $('.chat-all-btn',   containerEl);
+    const resetBtn = $('.chat-reset-btn', containerEl);
+    if (nextBtn)  nextBtn.addEventListener('click',  showNext);
+    if (allBtn)   allBtn.addEventListener('click',   showAll);
+    if (resetBtn) resetBtn.addEventListener('click', reset);
+
+    updateProgress();
+  }
+
+  $$('.chat-window').forEach(el => initChat(el));
+
+  /* ── FLOW ANIMATION ENGINE ─────────────────────────────────── */
+  function initFlow(containerEl) {
+    if (!containerEl) return;
+    const stepsData  = JSON.parse(containerEl.dataset.steps || '[]');
+    const labelEl    = $('.flow-step-label', containerEl);
+    const progressEl = $('.flow-progress',   containerEl);
+    const packet     = $('.flow-packet',     containerEl);
+    let step = 0;
+
+    function updateProgress() {
+      if (progressEl) progressEl.textContent = 'Step ' + step + ' / ' + stepsData.length;
+    }
+
+    function animatePacket(fromId, toId) {
+      if (!packet) return;
+      const fromEl = $('#' + fromId);
+      const toEl   = $('#' + toId);
+      if (!fromEl || !toEl) return;
+      const fromR = fromEl.getBoundingClientRect();
+      const toR   = toEl.getBoundingClientRect();
+      const contR = containerEl.getBoundingClientRect();
+      const fx = fromR.left + fromR.width / 2  - contR.left;
+      const fy = fromR.top  + fromR.height / 2 - contR.top;
+      const tx = toR.left   + toR.width / 2    - contR.left;
+      const ty = toR.top    + toR.height / 2   - contR.top;
+      packet.style.setProperty('--packet-from-x', fx + 'px');
+      packet.style.setProperty('--packet-from-y', fy + 'px');
+      packet.style.setProperty('--packet-to-x',   tx + 'px');
+      packet.style.setProperty('--packet-to-y',   ty + 'px');
+      packet.style.display    = 'block';
+      packet.style.animation  = 'none';
+      packet.offsetHeight; // reflow
+      packet.style.animation  = 'packetMove 0.8s var(--ease-in-out) forwards';
+      setTimeout(() => { packet.style.display = 'none'; }, 850);
+    }
+
+    function next() {
+      if (step >= stepsData.length) return;
+      const s = stepsData[step];
+      $$('.flow-actor', containerEl).forEach(a => a.classList.remove('active'));
+      if (s.highlight) {
+        const hEl = $('#' + s.highlight, containerEl) || $('#flow-' + s.highlight);
+        if (hEl) hEl.classList.add('active');
+      }
+      if (s.packet && s.from && s.to) animatePacket('flow-' + s.from, 'flow-' + s.to);
+      if (labelEl) labelEl.textContent = s.label || '';
+      step++;
+      updateProgress();
+    }
+
+    function reset() {
+      step = 0;
+      $$('.flow-actor', containerEl).forEach(a => a.classList.remove('active'));
+      if (labelEl) labelEl.textContent = 'Click "Next Step" to begin';
+      if (packet)  packet.style.display = 'none';
+      updateProgress();
+    }
+
+    const nextBtn  = $('.flow-next-btn',  containerEl);
+    const resetBtn = $('.flow-reset-btn', containerEl);
+    if (nextBtn)  nextBtn.addEventListener('click',  next);
+    if (resetBtn) resetBtn.addEventListener('click', reset);
+
+    updateProgress();
+  }
+
+  $$('.flow-animation').forEach(el => initFlow(el));
+
+  /* ── ARCHITECTURE DIAGRAM ──────────────────────────────────── */
+  $$('.arch-component').forEach(comp => {
+    comp.addEventListener('click', function () {
+      const diagram = this.closest('.arch-diagram');
+      $$('.arch-component', diagram).forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+      const descEl = $('.arch-description', diagram);
+      if (descEl) descEl.textContent = this.dataset.desc || '';
+    });
+  });
+
+  /* ── BUG CHALLENGE ─────────────────────────────────────────── */
+  window.checkBugLine = function (el, isCorrect) {
+    const challenge = el.closest('.bug-challenge');
+    const feedback  = $('.bug-feedback', challenge);
+    if (isCorrect) {
+      el.classList.add('correct');
+      feedback.innerHTML  = '<strong>Found it!</strong> ' + (el.dataset.explanation || '');
+      feedback.className  = 'bug-feedback show success';
+      $$('.bug-line', challenge).forEach(l => l.style.pointerEvents = 'none');
+    } else {
+      el.classList.add('incorrect');
+      feedback.innerHTML  = (el.dataset.hint || 'Not this line — keep looking...');
+      feedback.className  = 'bug-feedback show error';
+      setTimeout(() => {
+        el.classList.remove('incorrect');
+        feedback.className = 'bug-feedback';
+      }, 1800);
+    }
+  };
+
+  /* ── LAYER TOGGLE ──────────────────────────────────────────── */
+  window.showLayer = function (layerId, btn) {
+    const demo = btn ? btn.closest('.layer-demo') : null;
+    if (!demo) return;
+    $$('.layer', demo).forEach(l => l.style.display = 'none');
+    $$('.layer-tab', demo).forEach(t => t.classList.remove('active'));
+    const layer = $('#' + layerId);
+    if (layer) layer.style.display = 'block';
+    btn.classList.add('active');
+  };
+
+})();
+  </script>
+</body>
+</html>

@@ -1321,7 +1321,7 @@ p:last-child { margin-bottom: 0; }
   <span class="code-property">properties</span>: {
     <span class="code-property">addressSpace</span>: {
       <span class="code-property">addressPrefixes</span>: [
-        <span class="code-string">'10.0.0.0/16'</span>
+        <span class="code-string">'10.x.x.x/16'</span>
       ]
     }
   }
@@ -1333,7 +1333,7 @@ p:last-child { margin-bottom: 0; }
               <p class="tl">"I want a thing called <strong>vnet</strong> — a private network."</p>
               <p class="tl">Name it <code>vs-plat-dev-vnet</code> (the <code>${prefix}</code> fills in to <code>vs-plat</code>).</p>
               <p class="tl">Put it in our cloud region (set elsewhere).</p>
-              <p class="tl">Reserve a big block of internal addresses, <code>10.0.0.0/16</code> — room for ~65,000 private addresses, like buying a whole zip code for the campus.</p>
+              <p class="tl">Reserve a big block of internal addresses, <code>10.x.x.x/16</code> — room for ~65,000 private addresses, like buying a whole zip code for the campus.</p>
               <p class="tl">That's it. No "how" — just the "what."</p>
             </div>
           </div>
@@ -1530,7 +1530,7 @@ p:last-child { margin-bottom: 0; }
 <span class="code-keyword">@export</span>()
 <span class="code-keyword">var</span> location = <span class="code-string">'eastus2'</span>
 <span class="code-keyword">@export</span>()
-<span class="code-keyword">var</span> aksNodesSubnetPrefix = <span class="code-string">'10.0.1.0/24'</span></code></pre>
+<span class="code-keyword">var</span> aksNodesSubnetPrefix = <span class="code-string">'10.x.x.x/24'</span></code></pre>
           </div>
           <div class="translation-english">
             <span class="translation-label">PLAIN ENGLISH</span>
@@ -1722,7 +1722,7 @@ p:last-child { margin-bottom: 0; }
             <div class="icon-circle" style="background: var(--color-actor-2)">🧱</div>
             <div>
               <strong>VNet — the perimeter fence</strong>
-              <p>A <span class="term" data-definition="Virtual Network: a private, isolated network inside Azure where your cloud resources talk to each other. Outsiders can't see in unless you explicitly open a door.">virtual network</span> that wraps everything in one private address space (<code>10.0.0.0/16</code>).</p>
+              <p>A <span class="term" data-definition="Virtual Network: a private, isolated network inside Azure where your cloud resources talk to each other. Outsiders can't see in unless you explicitly open a door.">virtual network</span> that wraps everything in one private address space (<code>10.x.x.x/16</code>).</p>
             </div>
           </div>
           <div class="icon-row animate-in">
